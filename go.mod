@@ -1,11 +1,11 @@
 module gitee.com/zngue_mic/zng_tool
 
-go 1.23.2
+go 1.22.6
 
 require (
 	github.com/fatih/color v1.18.0
 	github.com/spf13/cobra v1.8.1
-	golang.org/x/mod v0.8.0
+	golang.org/x/mod v0.22.0
 )
 
 require (
