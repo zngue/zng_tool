@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"gitee.com/zngue_mic/zng_tool/app"
 	"github.com/spf13/cobra"
+	"github.com/zngue/zng_tool/app"
 	"os"
 )
 
