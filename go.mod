@@ -1,6 +1,6 @@
 module github.com/zngue/zng_tool
 
-go 1.19
+go 1.23.2
 
 require (
 	github.com/fatih/color v1.18.0
