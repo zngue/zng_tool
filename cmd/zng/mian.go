@@ -25,7 +25,14 @@ func main() {
 					fmt.Println("请输入项目名称")
 				}
 				fmt.Println(fmt.Sprintf("开始创建项目：%s", args[0]))
-				var err = run(args[0])
+				var (
+					name   = args[0]
+					branch = "master"
+				)
+				if len(args) >= 2 {
+					branch = args[1]
+				}
+				var err = run(name, branch)
 				if err != nil {
 					fmt.Println(err)
 				}
@@ -39,10 +46,9 @@ func main() {
 	}
 	return
 }
-func run(name string) (err error) {
+func run(name string, branch string) (err error) {
 	var (
-		url    = "https://gitee.com/zngue_mic/zng_layout.git"
-		branch = "master"
+		url = "https://gitee.com/zngue_mic/zng_layout.git"
 	)
 	//判断文件夹是否存在
 	_, err = os.Stat(name)
