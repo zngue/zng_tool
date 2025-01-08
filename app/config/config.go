@@ -126,14 +126,14 @@ func getConfigDir() (string, error) {
 	switch runtime.GOOS {
 	case "windows":
 		// Windows 上，放在 C:\Users\Administrator\.zng 目录下
-		configDir = filepath.Join("C:", "Users", "Administrator", ".zng")
+		configDir = filepath.Join("C:", "Users", "Administrator", ".zng", "tool")
 	case "linux", "darwin":
 		// Linux 和 macOS 上，放在用户的主目录下的 .zng 文件夹
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
 			return "", err
 		}
-		configDir = filepath.Join(homeDir, ".zng")
+		configDir = filepath.Join(homeDir, ".zng", "tool")
 	default:
 		return "", fmt.Errorf("unsupported operating system: %s", runtime.GOOS)
 	}
