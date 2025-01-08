@@ -11,7 +11,7 @@ import (
 
 var command = &cobra.Command{
 	Use:   "c",
-	Long:  `zng: zng build`,
+	Long:  `zng: zng config`,
 	Short: "配置信息管理",
 }
 
