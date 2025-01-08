@@ -10,8 +10,9 @@ import (
 )
 
 var command = &cobra.Command{
-	Use:  "config",
-	Long: `zng: zng build`,
+	Use:   "c",
+	Long:  `zng: zng build`,
+	Short: "配置信息管理",
 }
 
 type Config struct {
@@ -22,26 +23,54 @@ func Init() *cobra.Command {
 	command.AddCommand(
 		List(),
 		Set(),
+		Remove(),
 	)
 	return command
 }
-func Set() *cobra.Command {
+
+// Remove
+func Remove() *cobra.Command {
 	return &cobra.Command{
-		Use:  "set",
-		Long: `zng: zng set`,
+		Use:   "rm",
+		Long:  `zng: zng config remove`,
+		Short: "remove 删除配置",
 		Run: func(cmd *cobra.Command, args []string) {
-			if len(args) <= 2 {
+			if len(args) < 1 {
 				fmt.Println("参数错误")
 				return
 			}
-			viper.Set(args[1], args[2])
+			viper.Set(args[0], nil)
+			err := viper.WriteConfig()
+			if err != nil {
+				fmt.Println("写入配置文件失败:", err)
+			}
+		},
+	}
+}
+func Set() *cobra.Command {
+	return &cobra.Command{
+		Use:   "s",
+		Long:  `zng: zng set`,
+		Short: "set info 设置配置信息",
+		Run: func(cmd *cobra.Command, args []string) {
+			if len(args) < 2 {
+				fmt.Println("参数错误")
+				return
+			}
+			viper.Set(args[0], args[1])
+			err := viper.WriteConfig()
+			if err != nil {
+				fmt.Println("写入配置文件失败:", err)
+				return
+			}
 		},
 	}
 }
 func List() *cobra.Command {
 	return &cobra.Command{
-		Use:  "list",
-		Long: `zng: zng list`,
+		Use:   "l",
+		Long:  `zng: zng list`,
+		Short: "list info 获取配置信息",
 		Run: func(cmd *cobra.Command, args []string) {
 			var version = viper.Get("version")
 			fmt.Println(version)
@@ -103,7 +132,8 @@ func CreateDefaultConfig(configDir string) (err error) {
 	//判断文件是否存在
 	_, err = os.Stat(configFilePath)
 	if err == nil {
-		fmt.Println("config.yaml 配置文件已存在")
+		//fmt.Println("config.yaml 配置文件已存在", configFilePath)
+		fmt.Println(configFilePath)
 		return
 	}
 	var f *os.File
