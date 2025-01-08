@@ -7,7 +7,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 )
 
 var command = &cobra.Command{
@@ -58,11 +57,7 @@ func AllList() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			keys := viper.AllKeys()
 			for _, key := range keys {
-				useKey := key
-				if strings.Contains(key, "default.") {
-					useKey = strings.ReplaceAll(key, "default.", "")
-				}
-				fmt.Println(fmt.Sprintf("%s=%s", useKey, viper.Get(key)))
+				fmt.Println(fmt.Sprintf("%s=%s", key, viper.Get(key)))
 			}
 		},
 	}
@@ -118,7 +113,7 @@ func Run() {
 	viper.AddConfigPath(dir)      // 配置文件夹路径
 	viper.SetConfigName("config") // 配置文件名，假设为 config.yaml
 	//viper.SetConfigType("yaml")   // 配置文件类型是 YAML
-	viper.SetConfigType("ini") // 配置文件类型是 YAML
+	viper.SetConfigType("toml") // 配置文件类型是 YAML
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("配置文件读取错误，创建配置文件:", err)
@@ -155,7 +150,7 @@ func getConfigDir() (string, error) {
 }
 func CreateDefaultConfig(configDir string) (err error) {
 	// 创建并写入默认配置文件
-	configFilePath := configDir + "/config.ini"
+	configFilePath := configDir + "/config.toml"
 	//判断文件是否存在
 	_, err = os.Stat(configFilePath)
 	if err == nil {
