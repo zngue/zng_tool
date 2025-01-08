@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"strings"
 )
 
 var command = &cobra.Command{
@@ -24,6 +25,7 @@ func Init() *cobra.Command {
 		List(),
 		Set(),
 		Remove(),
+		AllList(),
 	)
 	return command
 }
@@ -47,6 +49,25 @@ func Remove() *cobra.Command {
 		},
 	}
 }
+
+func AllList() *cobra.Command {
+	return &cobra.Command{
+		Use:   "w",
+		Long:  `zng: zng list all`,
+		Short: "all info 获取所有配置信息",
+		Run: func(cmd *cobra.Command, args []string) {
+			keys := viper.AllKeys()
+			for _, key := range keys {
+				useKey := key
+				if strings.Contains(key, "default.") {
+					useKey = strings.ReplaceAll(key, "default.", "")
+				}
+				fmt.Println(fmt.Sprintf("%s=%s", useKey, viper.Get(key)))
+			}
+		},
+	}
+}
+
 func Set() *cobra.Command {
 	return &cobra.Command{
 		Use:   "s",
@@ -72,8 +93,12 @@ func List() *cobra.Command {
 		Long:  `zng: zng list`,
 		Short: "list info 获取配置信息",
 		Run: func(cmd *cobra.Command, args []string) {
-			var version = viper.Get("version")
-			fmt.Println(version)
+			if len(args) < 1 {
+				fmt.Println("参数错误")
+				return
+			}
+			content := viper.Get(args[0])
+			fmt.Println(content)
 		},
 	}
 }
@@ -89,9 +114,11 @@ func Run() {
 		fmt.Println("创建配置文件失败:", err2)
 		return
 	}
+	viper.AutomaticEnv()
 	viper.AddConfigPath(dir)      // 配置文件夹路径
 	viper.SetConfigName("config") // 配置文件名，假设为 config.yaml
-	viper.SetConfigType("yaml")   // 配置文件类型是 YAML
+	//viper.SetConfigType("yaml")   // 配置文件类型是 YAML
+	viper.SetConfigType("ini") // 配置文件类型是 YAML
 	err := viper.ReadInConfig()
 	if err != nil {
 		fmt.Println("配置文件读取错误，创建配置文件:", err)
@@ -118,7 +145,7 @@ func getConfigDir() (string, error) {
 
 	// 检查目录是否存在，如果不存在则创建
 	if _, err := os.Stat(configDir); os.IsNotExist(err) {
-		err := os.MkdirAll(configDir, os.ModePerm)
+		err = os.MkdirAll(configDir, os.ModePerm)
 		if err != nil {
 			return "", err
 		}
@@ -128,7 +155,7 @@ func getConfigDir() (string, error) {
 }
 func CreateDefaultConfig(configDir string) (err error) {
 	// 创建并写入默认配置文件
-	configFilePath := configDir + "/config.yaml"
+	configFilePath := configDir + "/config.ini"
 	//判断文件是否存在
 	_, err = os.Stat(configFilePath)
 	if err == nil {
@@ -147,8 +174,5 @@ func CreateDefaultConfig(configDir string) (err error) {
 			return
 		}
 	}(f)
-	// 写入默认配置内容
-	defaultConfig := `version: 1.0.2`
-	_, err = f.WriteString(defaultConfig)
 	return
 }
