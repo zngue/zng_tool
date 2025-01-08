@@ -12,7 +12,7 @@ import (
 var command = &cobra.Command{
 	Use:   "c",
 	Long:  `zng: zng config`,
-	Short: "配置信息管理",
+	Short: "config 配置信息管理",
 }
 
 type Config struct {
@@ -40,7 +40,7 @@ func Remove() *cobra.Command {
 				fmt.Println("参数错误")
 				return
 			}
-			viper.Set(args[0], nil)
+			viper.Set(args[0], "")
 			err := viper.WriteConfig()
 			if err != nil {
 				fmt.Println("写入配置文件失败:", err)
