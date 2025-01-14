@@ -35,11 +35,24 @@ func Client() *cobra.Command {
 				validateKey = ""
 			)
 			var isWindows = IsWindows()
+			goBin := os.Getenv("GOBIN")
+			if goBin == "" {
+				fmt.Println("请设置GOBIN go env -w GOBIN=G:\\go\\bin")
+				return
+			}
+			fmt.Println("goBin:", goBin)
+			var binGinHttp string
 			if isWindows {
-				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=protoc-gen-gin-http.exe --custom_out=.  "
+				binGinHttp = fmt.Sprintf("%s\\protoc-gen-protoc-gen-gin-http.exe", goBin)
+			} else {
+				binGinHttp = fmt.Sprintf("%s/protoc-gen-protoc-gen-gin-http", goBin)
+			}
+			//获取go bin 所在目录
+			if isWindows {
+				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=.  "
 				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
 			} else {
-				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=protoc-gen-gin-http --custom_out=. "
+				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=. "
 				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
 			}
 			Run(httpKey, args[0])
