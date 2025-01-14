@@ -6,7 +6,7 @@ import (
 )
 
 var CommandBuild = &cobra.Command{
-	Use:  "build",
+	Use:  "b",
 	Long: `zng: zng build`,
 }
 var CommandUrl = &cobra.Command{

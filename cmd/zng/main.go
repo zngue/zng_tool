@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/zngue/zng_tool/app/config"
 	"github.com/zngue/zng_tool/app/project"
+	"github.com/zngue/zng_tool/app/proto"
 )
 
 var rootCmd = &cobra.Command{
@@ -20,6 +21,7 @@ func main() {
 	rootCmd.AddCommand(
 		project.CommandProject,
 		config.Init(),
+		proto.Init(),
 	)
 	err = rootCmd.Execute()
 	if err != nil {

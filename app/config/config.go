@@ -15,10 +15,6 @@ var command = &cobra.Command{
 	Short: "config 配置信息管理",
 }
 
-type Config struct {
-	Version string `yaml:"version"`
-}
-
 func Init() *cobra.Command {
 	command.AddCommand(
 		List(),
