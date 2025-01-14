@@ -32,17 +32,16 @@ func Client() *cobra.Command {
 			var (
 				httpKey     = ""
 				grpcKey     = "protoc --proto_path=./third  --proto_path=.  --go_out=. --go-grpc_out=. "
-				validateKey = "protoc --proto_path=./third  --proto_path=./api --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
+				validateKey = ""
 			)
 			var isWindows = IsWindows()
 			if isWindows {
 				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=protoc-gen-gin-http.exe --custom_out=.  "
-				validateKey = "protoc --proto_path=./third  --proto_path=./api --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
+				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
 			} else {
 				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=protoc-gen-gin-http --custom_out=. "
-				validateKey = "protoc --proto_path=./third  --proto_path=./api --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
+				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
 			}
-			fmt.Println(args[0])
 			Run(httpKey, args[0])
 			Run(grpcKey, args[0])
 			Run(validateKey, args[0])
@@ -85,7 +84,6 @@ func IsWindows() bool {
 	return runtime.GOOS == "windows"
 }
 func Run(httpKey string, file string) {
-	fmt.Println(httpKey)
 	if IsWindows() {
 		runKey := fmt.Sprintf("%s %s", httpKey, file)
 		fmt.Println(runKey)
