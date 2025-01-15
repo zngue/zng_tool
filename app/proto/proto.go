@@ -52,7 +52,7 @@ func Client() *cobra.Command {
 				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=.  "
 				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
 			} else {
-				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=. "
+				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + "/protoc-gen-gin-http --custom_out=. "
 				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
 			}
 			Run(httpKey, args[0])
