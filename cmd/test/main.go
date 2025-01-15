@@ -2,43 +2,37 @@ package main
 
 import (
 	"fmt"
-	"github.com/zngue/zng_tool/app"
 	"os"
 	"os/exec"
-	"path/filepath"
-	"regexp"
 )
 
 func main() {
 	proto := "api/test/v1/test.proto"
 	path, err := exec.LookPath("protoc-gen-gin-http")
-	dir := app.HomeWithDir("repo/")
-	dir = filepath.Join(dir,
-		"gitee.com",
-		"zngue_mic",
-		"zng_layout@master",
-		"third")
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println(err.Error())
 		return
 	}
 	input := []string{
 		"--proto_path=.",
 	}
-	inputExt := []string{
+	fmt.Println("文件所在路径是：", path)
+
+	input = append(input,
 		"--proto_path=./third",
+	)
+	inputExt := []string{
 		"--go_out=paths=source_relative:.",
-		"--go-grpc_out=paths=source_relative:.",
 		"--gin-http_out=paths=source_relative:.",
 	}
 	input = append(input, inputExt...)
 
-	protoBytes, err := os.ReadFile(proto)
-	if err == nil && len(protoBytes) > 0 {
-		if ok, _ := regexp.Match(`\n[^/]*(import)\s+"validate/validate.proto"`, protoBytes); ok {
-			input = append(input, "--validate_out=lang=go,paths=source_relative:.")
-		}
-	}
+	//protoBytes, err := os.ReadFile(proto)
+	//if err == nil && len(protoBytes) > 0 {
+	//	if ok, _ := regexp.Match(`\n[^/]*(import)\s+"validate/validate.proto"`, protoBytes); ok {
+	//		input = append(input, "--validate_out=lang=go,paths=source_relative:.")
+	//	}
+	//}
 	input = append(input, proto)
 	fd := exec.Command("protoc", input...)
 	fd.Stdout = os.Stdout
