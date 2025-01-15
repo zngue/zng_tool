@@ -2,14 +2,22 @@ package main
 
 import (
 	"fmt"
+	"github.com/zngue/zng_tool/app"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 )
 
 func main() {
 	proto := "api/test/v1/test.proto"
 	path, err := exec.LookPath("protoc-gen-gin-http")
+	dir := app.HomeWithDir("repo/")
+	dir = filepath.Join(dir,
+		"gitee.com",
+		"zngue_mic",
+		"zng_layout@master",
+		"third")
 	if err != nil {
 		fmt.Println(err)
 		return

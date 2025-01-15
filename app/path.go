@@ -11,7 +11,7 @@ import (
 	"github.com/fatih/color"
 )
 
-func kratosHome() string {
+func zngHome() string {
 	dir, err := os.UserHomeDir()
 	if err != nil {
 		log.Fatal(err)
@@ -25,8 +25,17 @@ func kratosHome() string {
 	return home
 }
 
-func kratosHomeWithDir(dir string) string {
-	home := filepath.Join(kratosHome(), dir)
+func zngHomeWithDir(dir string) string {
+	home := filepath.Join(zngHome(), dir)
+	if _, err := os.Stat(home); os.IsNotExist(err) {
+		if err := os.MkdirAll(home, 0o700); err != nil {
+			log.Fatal(err)
+		}
+	}
+	return home
+}
+func HomeWithDir(dir string) string {
+	home := filepath.Join(zngHome(), dir)
 	if _, err := os.Stat(home); os.IsNotExist(err) {
 		if err := os.MkdirAll(home, 0o700); err != nil {
 			log.Fatal(err)
