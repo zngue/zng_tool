@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type TestClient interface {
 	Info(ctx context.Context, in *GetTestRequest, opts ...grpc.CallOption) (*GetTestReply, error)
 	List(ctx context.Context, in *GetListTestRequest, opts ...grpc.CallOption) (*GetTestReply, error)
+	// 创建
 	Create(ctx context.Context, in *GetTestRequest, opts ...grpc.CallOption) (*GetTestReply, error)
 }
 
@@ -68,6 +69,7 @@ func (c *testClient) Create(ctx context.Context, in *GetTestRequest, opts ...grp
 type TestServer interface {
 	Info(context.Context, *GetTestRequest) (*GetTestReply, error)
 	List(context.Context, *GetListTestRequest) (*GetTestReply, error)
+	// 创建
 	Create(context.Context, *GetTestRequest) (*GetTestReply, error)
 	mustEmbedUnimplementedTestServer()
 }
