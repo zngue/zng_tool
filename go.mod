@@ -11,6 +11,7 @@ require (
 	github.com/spf13/viper v1.19.0
 	github.com/zngue/zng_app v1.0.3
 	golang.org/x/mod v0.22.0
+	golang.org/x/text v0.19.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240311132316-a219d84964c2
 	google.golang.org/protobuf v1.34.1
 
@@ -61,7 +62,6 @@ require (
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/text v0.19.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
