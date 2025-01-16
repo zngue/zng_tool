@@ -13,10 +13,12 @@ type ServiceDesc struct {
 	MessageMap  map[string]*proto.Message
 }
 type MethodDesc struct {
-	Name        string
-	RequestType string
-	ReturnType  string
-	Comment     string
+	Name           string
+	RequestType    string
+	ReturnType     string
+	ReturnDefault  string
+	RequestDefault string
+	Comment        string
 }
 
 func main() {
@@ -80,10 +82,12 @@ func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) {
 			continue
 		}
 		methods = append(methods, &MethodDesc{
-			Name:        val.Name,
-			RequestType: val.RequestType,
-			ReturnType:  val.ReturnsType,
-			Comment:     val.Comment.Message(),
+			Name:           val.Name,
+			RequestType:    val.RequestType,
+			ReturnType:     val.ReturnsType,
+			ReturnDefault:  "rs",
+			RequestDefault: "req",
+			Comment:        val.Comment.Message(),
 		})
 		fmt.Println(element)
 	}
