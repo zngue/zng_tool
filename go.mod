@@ -3,6 +3,7 @@ module github.com/zngue/zng_tool
 go 1.23.2
 
 require (
+	github.com/emicklei/proto v1.14.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/fatih/color v1.18.0
 	github.com/gin-gonic/gin v1.10.0
@@ -11,7 +12,6 @@ require (
 	github.com/zngue/zng_app v1.0.3
 	golang.org/x/mod v0.22.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20240311132316-a219d84964c2
-	google.golang.org/grpc v1.62.1
 	google.golang.org/protobuf v1.34.1
 
 )
@@ -29,7 +29,6 @@ require (
 	github.com/go-playground/validator/v10 v10.20.0 // indirect
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/goccy/go-json v0.10.2 // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
@@ -63,7 +62,6 @@ require (
 	golang.org/x/net v0.28.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/text v0.19.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240314234333-6e1732d8331c // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect

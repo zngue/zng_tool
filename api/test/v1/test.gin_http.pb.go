@@ -11,12 +11,6 @@ const OperationGinTestInfo = "api.test.v1.Test.Info"
 const OperationGinTestList = "api.test.v1.Test.List"
 const OperationGinTestCreate = "api.test.v1.Test.Create"
 
-// 服务接口
-type TestGinHttpService interface {
-	Info(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
-	List(ctx *gin.Context, req *GetListTestRequest) (rs *GetTestReply, err error)
-	Create(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
-}
 type TestGinHttpRouterService struct {
 	srv    TestGinHttpService
 	router *gin.RouterGroup
@@ -25,12 +19,26 @@ type TestGinHttpRouterService struct {
 // 服务注册
 func (s *TestGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
-		router.ApiGetFn(s.router, "/v1/test/info", s.Info()),
-		router.ApiGetFn(s.router, "/v1/test/list", s.List()),
-		router.ApiPostFn(s.router, "/v1/test/create", s.Create()),
+		router.ApiGetFn(s.router, "/v1/test/info", _Test_Info0_GIN_HTTP_Handler(s.srv)),
+		router.ApiGetFn(s.router, "/v1/test/list", _Test_List0_GIN_HTTP_Handler(s.srv)),
+		router.ApiPostFn(s.router, "/v1/test/create", _Test_Create0_GIN_HTTP_Handler(s.srv)),
 	)
 }
-func (s *TestGinHttpRouterService) Info() router.Fn {
+func NewTestGinHttpRouterService(router *gin.RouterGroup, srv TestGinHttpService) *TestGinHttpRouterService {
+	return &TestGinHttpRouterService{
+		srv:    srv,
+		router: router,
+	}
+}
+
+// 服务接口
+type TestGinHttpService interface {
+	Info(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
+	List(ctx *gin.Context, req *GetListTestRequest) (rs *GetTestReply, err error)
+	Create(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
+}
+
+func _Test_Info0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetTestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -41,11 +49,11 @@ func (s *TestGinHttpRouterService) Info() router.Fn {
 			return
 		}
 		ctx.Set("operation", OperationGinTestInfo)
-		rs, err = s.srv.Info(ctx, in)
+		rs, err = srv.Info(ctx, in)
 		return
 	}
 }
-func (s *TestGinHttpRouterService) List() router.Fn {
+func _Test_List0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetListTestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -56,11 +64,11 @@ func (s *TestGinHttpRouterService) List() router.Fn {
 			return
 		}
 		ctx.Set("operation", OperationGinTestList)
-		rs, err = s.srv.List(ctx, in)
+		rs, err = srv.List(ctx, in)
 		return
 	}
 }
-func (s *TestGinHttpRouterService) Create() router.Fn {
+func _Test_Create0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetTestRequest
 		if err = ctx.ShouldBind(&in); err != nil {
@@ -71,13 +79,7 @@ func (s *TestGinHttpRouterService) Create() router.Fn {
 			return
 		}
 		ctx.Set("operation", OperationGinTestCreate)
-		rs, err = s.srv.Create(ctx, in)
+		rs, err = srv.Create(ctx, in)
 		return
-	}
-}
-func NewTestGinHttpRouterService(router *gin.RouterGroup, srv TestGinHttpService) *TestGinHttpRouterService {
-	return &TestGinHttpRouterService{
-		srv:    srv,
-		router: router,
 	}
 }
