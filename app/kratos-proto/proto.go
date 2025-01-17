@@ -1,27 +1,14 @@
-package main
+package kratos_proto
 
 import (
 	"github.com/emicklei/proto"
+	"github.com/zngue/zng_tool/app/kratos-proto/data"
+	"github.com/zngue/zng_tool/app/kratos-proto/types"
 	"log"
 	"os"
 )
 
-type ServiceDesc struct {
-	ServiceName string
-	Methods     []*MethodDesc
-	MessageMap  map[string]*proto.Message
-	DoMessage   []*MessageDesc
-}
-type MethodDesc struct {
-	Name           string
-	RequestType    string
-	ReturnType     string
-	ReturnDefault  string
-	RequestDefault string
-	Comment        string
-}
-
-func main() {
+func Init() {
 	path := "api/test/v1/test.proto"
 	reader, err := os.Open(path)
 	if err != nil {
@@ -63,22 +50,24 @@ func main() {
 		}
 	}
 	for _, service := range serviceVal {
-		ServerTmp(service, messageVal)
+		var sc *types.ServiceDesc
+		sc = ServerTmp(service, messageVal)
+		data.NewDataTemplate(sc)
 	}
 }
 
-func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc *ServiceDesc, err error) {
-	sc = &ServiceDesc{
+func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc *types.ServiceDesc) {
+	sc = &types.ServiceDesc{
 		ServiceName: service.Name,
 		MessageMap:  messageMap,
 	}
-	var methods []*MethodDesc
+	var methods []*types.MethodDesc
 	for _, element := range service.Elements {
 		val, ok := element.(*proto.RPC)
 		if !ok || val == nil {
 			continue
 		}
-		methods = append(methods, &MethodDesc{
+		methods = append(methods, &types.MethodDesc{
 			Name:           val.Name,
 			RequestType:    val.RequestType,
 			ReturnType:     val.ReturnsType,
@@ -110,18 +99,18 @@ func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc
 			}
 		}
 	}
-	var messageDescItems []*MessageDesc
+	var messageDescItems []*types.MessageDesc
 	for _, val := range doMessageName {
 		msg := messageMap[val]
 		if msg != nil {
-			var filedSec []*FiledSec
+			var filedSec []*types.FiledSec
 			for _, element := range msg.Elements {
 				v, ok := element.(*proto.NormalField)
 				if !ok {
 					continue
 				}
 				if v != nil {
-					file := &FiledSec{
+					file := &types.FiledSec{
 						Name:       v.Name,
 						Type:       v.Type,
 						IsRepeated: v.Repeated,
@@ -129,7 +118,7 @@ func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc
 					filedSec = append(filedSec, file)
 				}
 			}
-			mg := &MessageDesc{
+			mg := &types.MessageDesc{
 				Name:   msg.Name,
 				Fields: filedSec,
 			}
@@ -139,18 +128,6 @@ func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc
 	sc.DoMessage = messageDescItems
 	sc.Methods = methods
 	return
-	//tmp := sc.execute()
-	//fmt.Println(tmp)
-}
-
-type MessageDesc struct {
-	Name   string
-	Fields []*FiledSec
-}
-type FiledSec struct {
-	Name       string
-	Type       string
-	IsRepeated bool
 }
 
 func inArray(val string, arr []string) bool {

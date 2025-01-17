@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"github.com/emicklei/proto"
 	"log"
 	"os"
@@ -67,8 +68,8 @@ func main() {
 	}
 }
 
-func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc *ServiceDesc, err error) {
-	sc = &ServiceDesc{
+func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) {
+	var sc = &ServiceDesc{
 		ServiceName: service.Name,
 		MessageMap:  messageMap,
 	}
@@ -138,9 +139,8 @@ func ServerTmp(service *proto.Service, messageMap map[string]*proto.Message) (sc
 	}
 	sc.DoMessage = messageDescItems
 	sc.Methods = methods
-	return
-	//tmp := sc.execute()
-	//fmt.Println(tmp)
+	tmp := sc.execute()
+	fmt.Println(tmp)
 }
 
 type MessageDesc struct {

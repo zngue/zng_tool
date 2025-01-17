@@ -23,7 +23,37 @@ service Test {//测试服务
       body: "*"
     };
   }
+  //用户列表
+  rpc ListUser (GetListTestRequest) returns (UserList) {
+    option (google.api.http) = {
+      get: "/v1/test/list_user"
+    };
+  }
+  rpc ListUser2 (GetList2TestRequest) returns (UserList2Rely) {
+    option (google.api.http) = {
+      get: "/v1/test/list_user2"
+    };
+  }
 }
+message GetList2TestRequest{
+  string name = 1;
+  int32 status = 2 [(validate.rules).int32 = {in:[0, 1, 2, 3, 4]}];
+  int32 age = 3;
+  int32 page = 4;
+  int32 pageSize = 5;
+  int32 order = 6;
+}
+message UserList2Rely {
+  repeated User user = 1;
+  int32 total = 2;
+  int32 page = 3;
+  int32 pageSize = 4;
+  int32 order = 5;
+  int32 totalPage = 6;
+  int32 status = 7;
+  int32 age = 8;
+}
+
 message GetListTestRequest{
   string name = 1;
 }
@@ -52,6 +82,7 @@ message UserExit {
 }
 message UserList {
   repeated User user = 1;
+  int32 total = 2;
 }
 enum UserType {
   USER_TYPE_UNSPECIFIED = 0;

@@ -32,18 +32,6 @@ func UpperFirst(s string) string {
 	return string(unicode.ToUpper(r)) + s[n:]
 }
 
-// LowerAll 所有字母都转化成小写
-func LowerAll(s string) string {
-	if s == "" {
-		return ""
-	}
-	var result string
-	for _, v := range s {
-		result += string(unicode.ToLower(v))
-	}
-	return result
-}
-
 type FileType int
 
 const (
@@ -75,9 +63,9 @@ func (s *ServiceDesc) execute() string {
 			msg := s.MessageMap[fileType]
 			if msg != nil { //自定义
 				if isRepeated {
-					return fmt.Sprintf("%s []*%s", UpperFirst(fileName), fileType)
+					return fmt.Sprintf("%s []*biz.%s", UpperFirst(fileName), fileType)
 				} else {
-					return fmt.Sprintf("%s *%s", UpperFirst(fileName), fileType)
+					return fmt.Sprintf("%s *biz.%s", UpperFirst(fileName), fileType)
 				}
 			} else {
 				if isRepeated {
@@ -134,9 +122,9 @@ func (s *ServiceDesc) execute() string {
 					msgType := DoParamsFile(msg, v)
 					switch msgType {
 					case AutoRepeated:
-						params = append(params, fmt.Sprintf("%s []*%s", v.Name, v.Type))
+						params = append(params, fmt.Sprintf("%s []*biz.%s", v.Name, v.Type))
 					case AutoNormal:
-						params = append(params, fmt.Sprintf("%s *%s", v.Name, v.Type))
+						params = append(params, fmt.Sprintf("%s *biz.%s", v.Name, v.Type))
 					case SystemRepeated:
 						params = append(params, fmt.Sprintf("%s []%s", v.Name, v.Type))
 					case SystemNormal:
@@ -145,7 +133,7 @@ func (s *ServiceDesc) execute() string {
 				}
 				return strings.Join(params, ",")
 			} else {
-				return fmt.Sprintf("%s *%s", defaultKey, methodType)
+				return fmt.Sprintf("%s *biz.%s", defaultKey, methodType)
 			}
 		},
 	}
