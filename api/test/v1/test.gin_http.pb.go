@@ -7,35 +7,37 @@ import (
 	"github.com/zngue/zng_app/pkg/validate"
 )
 
-const OperationGinTestInfo = "api.test.v1.Test.Info"
-const OperationGinTestList = "api.test.v1.Test.List"
-const OperationGinTestCreate = "api.test.v1.Test.Create"
-
 type TestGinHttpRouterService struct {
 	srv    TestGinHttpService
 	router *gin.RouterGroup
 }
 
-// 服务注册
 func (s *TestGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
 		router.ApiGetFn(s.router, "/v1/test/info", _Test_Info0_GIN_HTTP_Handler(s.srv)),
 		router.ApiGetFn(s.router, "/v1/test/list", _Test_List0_GIN_HTTP_Handler(s.srv)),
 		router.ApiPostFn(s.router, "/v1/test/create", _Test_Create0_GIN_HTTP_Handler(s.srv)),
+		router.ApiGetFn(s.router, "/v1/test/list_user", _Test_ListUser0_GIN_HTTP_Handler(s.srv)),
+		router.ApiGetFn(s.router, "/v1/test/list_user2", _Test_ListUser20_GIN_HTTP_Handler(s.srv)),
 	)
 }
-func NewTestGinHttpRouterService(router *gin.RouterGroup, srv TestGinHttpService) *TestGinHttpRouterService {
+
+func RegisterTestGinHttpRouterService(
+	api *gin.RouterGroup,
+	srv TestGinHttpService,
+) router.IApiService {
 	return &TestGinHttpRouterService{
 		srv:    srv,
-		router: router,
+		router: api,
 	}
 }
 
-// 服务接口
 type TestGinHttpService interface {
 	Info(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
 	List(ctx *gin.Context, req *GetListTestRequest) (rs *GetTestReply, err error)
 	Create(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
+	ListUser(ctx *gin.Context, req *GetListTestRequest) (rs *UserList, err error)
+	ListUser2(ctx *gin.Context, req *GetList2TestRequest) (rs *UserList2Rely, err error)
 }
 
 func _Test_Info0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
@@ -48,11 +50,11 @@ func _Test_Info0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		ctx.Set("operation", OperationGinTestInfo)
 		rs, err = srv.Info(ctx, in)
 		return
 	}
 }
+
 func _Test_List0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetListTestRequest
@@ -63,11 +65,11 @@ func _Test_List0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		ctx.Set("operation", OperationGinTestList)
 		rs, err = srv.List(ctx, in)
 		return
 	}
 }
+
 func _Test_Create0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetTestRequest
@@ -78,8 +80,37 @@ func _Test_Create0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		ctx.Set("operation", OperationGinTestCreate)
 		rs, err = srv.Create(ctx, in)
+		return
+	}
+}
+
+func _Test_ListUser0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+	return func(ctx *gin.Context) (rs any, err error) {
+		var in *GetListTestRequest
+		if err = ctx.BindJSON(&in); err != nil {
+			return
+		}
+		err = validate.Validate(in)
+		if err != nil {
+			return
+		}
+		rs, err = srv.ListUser(ctx, in)
+		return
+	}
+}
+
+func _Test_ListUser20_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+	return func(ctx *gin.Context) (rs any, err error) {
+		var in *GetList2TestRequest
+		if err = ctx.BindJSON(&in); err != nil {
+			return
+		}
+		err = validate.Validate(in)
+		if err != nil {
+			return
+		}
+		rs, err = srv.ListUser2(ctx, in)
 		return
 	}
 }
