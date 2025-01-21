@@ -1,4 +1,4 @@
-package data
+package service
 
 import (
 	"bytes"
@@ -15,33 +15,25 @@ import (
 //go:embed template.tpl
 var httpTemplate string
 
-type FileType int
-
-const (
-	AutoRepeated   FileType = 1 //自定义数组
-	AutoNormal     FileType = 2 //自定义
-	SystemRepeated FileType = 3 //系统数组
-	SystemNormal   FileType = 4 //系统
-)
-
-func DoParamsFile(msg *proto.Message, v *proto.NormalField) FileType {
-	if msg != nil {
-		if v.Repeated {
-			return AutoRepeated
-		} else {
-			return AutoNormal
-		}
-	} else {
-		if v.Repeated {
-			return SystemRepeated
-		} else {
-			return SystemNormal
-		}
-	}
-}
-func (s *ServiceDesc) execute() string {
+func (s *Template) Execute() string {
 	buf := new(bytes.Buffer)
 	funcMap := template.FuncMap{
+		"MessageVal": func(val proto.Visitee) string {
+			if item, ok := val.(*proto.NormalField); ok {
+				var name = util.UpperFirst(item.Name)
+				return fmt.Sprintf("%s:req.%s", name, name)
+			}
+			return ""
+		},
+		"IsAutoReq": func(fileType string) bool {
+			if val, ok := s.MessageMap[fileType]; ok && val != nil {
+				if len(val.Elements) > 3 {
+					return true
+				}
+			}
+			return false
+
+		},
 		"MessageFile": func(fileName, fileType string, isRepeated bool) string {
 			msg := s.MessageMap[fileType]
 			if msg != nil { //自定义
@@ -81,7 +73,7 @@ func (s *ServiceDesc) execute() string {
 					if !oks {
 						continue
 					}
-					params = append(params, v.Name)
+					params = append(params, fmt.Sprintf("req.%s", util.UpperFirst(v.Name)))
 				}
 				return strings.Join(params, ",")
 			} else {
@@ -102,15 +94,15 @@ func (s *ServiceDesc) execute() string {
 						continue
 					}
 					msg := s.MessageMap[v.Type]
-					msgType := DoParamsFile(msg, v)
+					msgType := util.DoParamsFile(msg, v)
 					switch msgType {
-					case AutoRepeated:
+					case util.AutoRepeated:
 						params = append(params, fmt.Sprintf("%s []*biz.%s", v.Name, v.Type))
-					case AutoNormal:
+					case util.AutoNormal:
 						params = append(params, fmt.Sprintf("%s *biz.%s", v.Name, v.Type))
-					case SystemRepeated:
+					case util.SystemRepeated:
 						params = append(params, fmt.Sprintf("%s []%s", v.Name, v.Type))
-					case SystemNormal:
+					case util.SystemNormal:
 						params = append(params, fmt.Sprintf("%s %s", v.Name, v.Type))
 					}
 				}
