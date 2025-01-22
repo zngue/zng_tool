@@ -13,7 +13,7 @@ const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}
 {{- range .Methods}}
 const OperationGinUrl{{$svrType}}{{.OriginalName}}="{{.Path}}"
 {{- end}}
-//服务接口 {{- .Comment -}}
+//服务接口 {{- .Comment }}
 type {{$svrType}}GinHttpService interface {
 	{{- range .Methods }}
 	{{.Name}}(ctx *gin.Context, req *{{.Request}}) (rs *{{.Reply}}, err error)
@@ -23,7 +23,7 @@ type {{$svrType}}GinHttpRouterService struct {
 	srv    {{$svrType}}GinHttpService
 	router *gin.RouterGroup
 }
-//服务注册 {{- .Comment -}}
+//服务注册 {{- .Comment }}
 func (s *{{$svrType}}GinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
 	{{- range .Methods }}
