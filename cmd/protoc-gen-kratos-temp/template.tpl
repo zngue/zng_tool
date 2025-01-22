@@ -5,13 +5,8 @@ import (
 	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
 )
-// 服务操作
 {{- range .Methods}}
 const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}}"
-{{- end}}
-// 服务url
-{{- range .Methods}}
-const OperationGinUrl{{$svrType}}{{.OriginalName}}="{{.Path}}"
 {{- end}}
 //服务接口 {{- .Comment -}}
 type {{$svrType}}GinHttpService interface {
@@ -27,7 +22,7 @@ type {{$svrType}}GinHttpRouterService struct {
 func (s *{{$svrType}}GinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
 	{{- range .Methods }}
-		router.{{FnName .Method}}(s.router, OperationGinUrl{{$svrType}}{{.OriginalName}}, s.{{.Name}}()),
+		router.{{FnName .Method}}(s.router, "{{.Path}}", s.{{.Name}}()),
 	{{- end}}
 	)
 }

@@ -4,26 +4,28 @@ package api.test.v1;
 option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
-
-service Test {//测试服务
+import "google/protobuf/empty.proto"; // 导入 Empty 类型
+//abc
+service Test {
+  // 获取用户信息
   rpc Info (GetTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
       get: "/v1/test/info"
     };
   }
+  // 获取用户列表
   rpc List (GetListTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
       get: "/v1/test/list"
     };
   }
-  // 创建
+  // 创建用户
   rpc Create (GetTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
       post: "/v1/test/create"
       body: "*"
     };
   }
-  //用户列表
   rpc ListUser (GetListTestRequest) returns (UserList) {
     option (google.api.http) = {
       get: "/v1/test/list_user"
@@ -34,7 +36,21 @@ service Test {//测试服务
       get: "/v1/test/list_user2"
     };
   }
+  rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty ) {
+    option (google.api.http) = {
+      post: "/v1/test/updateUser"
+      body: "*"
+    };
+  }
 }
+message UpdateUserRequest{
+  int32 id = 1; // id
+  string name = 2; // 姓名
+  int32 age = 3;
+  int32 sex = 4;
+  string image = 5;
+}
+
 message GetList2TestRequest{
   string name = 1;
   int32 status = 2 [(validate.rules).int32 = {in:[0, 1, 2, 3, 4]}];

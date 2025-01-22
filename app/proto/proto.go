@@ -31,7 +31,7 @@ func Client() *cobra.Command {
 			}
 			var (
 				httpKey     = ""
-				grpcKey     = "protoc --proto_path=./third  --proto_path=.  --go_out=. --go-grpc_out=. "
+				grpcKey     = "protoc --proto_path=./third_party  --proto_path=.  --go_out=. --go-grpc_out=. "
 				validateKey = ""
 			)
 			var isWindows = IsWindows()
@@ -49,11 +49,11 @@ func Client() *cobra.Command {
 			}
 			//获取go bin 所在目录
 			if isWindows {
-				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=.  "
-				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
+				httpKey = "protoc --proto_path=./third_party  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + " --custom_out=.  "
+				validateKey = "protoc --proto_path=./third_party  --proto_path=. --plugin=protoc-gen-validate.exe  --go_out=. --validate_out=lang=go:. "
 			} else {
-				httpKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + "/protoc-gen-gin-http --custom_out=. "
-				validateKey = "protoc --proto_path=./third  --proto_path=. --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
+				httpKey = "protoc --proto_path=./third_party  --proto_path=. --plugin=protoc-gen-custom=" + binGinHttp + "/protoc-gen-gin-http --custom_out=. "
+				validateKey = "protoc --proto_path=./third_party  --proto_path=. --plugin=protoc-gen-validate  --go_out=. --validate_out=lang=go:. "
 			}
 			Run(httpKey, args[0])
 			Run(grpcKey, args[0])

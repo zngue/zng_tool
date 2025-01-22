@@ -2,45 +2,59 @@
 package v1
 
 import (
+	empty "github.com/golang/protobuf/ptypes/empty"
+)
+
+import (
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
 )
 
-type TestGinHttpRouterService struct {
-	srv    TestGinHttpService
-	router *gin.RouterGroup
-}
+// 服务操作
+const OperationGinTestInfo = "api.test.v1.Test.Info"
+const OperationGinTestList = "api.test.v1.Test.List"
+const OperationGinTestCreate = "api.test.v1.Test.Create"
+const OperationGinTestListUser = "api.test.v1.Test.ListUser"
+const OperationGinTestListUser2 = "api.test.v1.Test.ListUser2"
+const OperationGinTestUpdateUser = "api.test.v1.Test.UpdateUser"
 
-func (s *TestGinHttpRouterService) Register() []router.IRouter {
-	return router.ApiServiceFn(
-		router.ApiGetFn(s.router, "/v1/test/info", _Test_Info0_GIN_HTTP_Handler(s.srv)),
-		router.ApiGetFn(s.router, "/v1/test/list", _Test_List0_GIN_HTTP_Handler(s.srv)),
-		router.ApiPostFn(s.router, "/v1/test/create", _Test_Create0_GIN_HTTP_Handler(s.srv)),
-		router.ApiGetFn(s.router, "/v1/test/list_user", _Test_ListUser0_GIN_HTTP_Handler(s.srv)),
-		router.ApiGetFn(s.router, "/v1/test/list_user2", _Test_ListUser20_GIN_HTTP_Handler(s.srv)),
-	)
-}
+// 服务url
+const OperationGinUrlTestInfo = "/v1/test/info"
+const OperationGinUrlTestList = "/v1/test/list"
+const OperationGinUrlTestCreate = "/v1/test/create"
+const OperationGinUrlTestListUser = "/v1/test/list_user"
+const OperationGinUrlTestListUser2 = "/v1/test/list_user2"
+const OperationGinUrlTestUpdateUser = "/v1/test/updateUser"
 
-func RegisterTestGinHttpRouterService(
-	api *gin.RouterGroup,
-	srv TestGinHttpService,
-) router.IApiService {
-	return &TestGinHttpRouterService{
-		srv:    srv,
-		router: api,
-	}
-}
-
+// 服务接口abc
 type TestGinHttpService interface {
 	Info(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
 	List(ctx *gin.Context, req *GetListTestRequest) (rs *GetTestReply, err error)
 	Create(ctx *gin.Context, req *GetTestRequest) (rs *GetTestReply, err error)
 	ListUser(ctx *gin.Context, req *GetListTestRequest) (rs *UserList, err error)
 	ListUser2(ctx *gin.Context, req *GetList2TestRequest) (rs *UserList2Rely, err error)
+	UpdateUser(ctx *gin.Context, req *UpdateUserRequest) (rs *empty.Empty, err error)
+}
+type TestGinHttpRouterService struct {
+	srv    TestGinHttpService
+	router *gin.RouterGroup
 }
 
-func _Test_Info0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+// 服务注册abc
+func (s *TestGinHttpRouterService) Register() []router.IRouter {
+	return router.ApiServiceFn(
+		router.ApiGetFn(s.router, OperationGinUrlTestInfo, s.Info()),
+		router.ApiGetFn(s.router, OperationGinUrlTestList, s.List()),
+		router.ApiPostFn(s.router, OperationGinUrlTestCreate, s.Create()),
+		router.ApiGetFn(s.router, OperationGinUrlTestListUser, s.ListUser()),
+		router.ApiGetFn(s.router, OperationGinUrlTestListUser2, s.ListUser2()),
+		router.ApiPostFn(s.router, OperationGinUrlTestUpdateUser, s.UpdateUser()),
+	)
+}
+
+// Info 获取用户信息
+func (s *TestGinHttpRouterService) Info() router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetTestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -50,12 +64,14 @@ func _Test_Info0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		rs, err = srv.Info(ctx, in)
+		ctx.Set("operation", OperationGinTestInfo)
+		rs, err = s.srv.Info(ctx, in)
 		return
 	}
 }
 
-func _Test_List0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+// List 获取用户列表
+func (s *TestGinHttpRouterService) List() router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetListTestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -65,12 +81,14 @@ func _Test_List0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		rs, err = srv.List(ctx, in)
+		ctx.Set("operation", OperationGinTestList)
+		rs, err = s.srv.List(ctx, in)
 		return
 	}
 }
 
-func _Test_Create0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+// Create 创建用户
+func (s *TestGinHttpRouterService) Create() router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetTestRequest
 		if err = ctx.ShouldBind(&in); err != nil {
@@ -80,12 +98,13 @@ func _Test_Create0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		rs, err = srv.Create(ctx, in)
+		ctx.Set("operation", OperationGinTestCreate)
+		rs, err = s.srv.Create(ctx, in)
 		return
 	}
 }
 
-func _Test_ListUser0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+func (s *TestGinHttpRouterService) ListUser() router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetListTestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -95,12 +114,13 @@ func _Test_ListUser0_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		rs, err = srv.ListUser(ctx, in)
+		ctx.Set("operation", OperationGinTestListUser)
+		rs, err = s.srv.ListUser(ctx, in)
 		return
 	}
 }
 
-func _Test_ListUser20_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
+func (s *TestGinHttpRouterService) ListUser2() router.Fn {
 	return func(ctx *gin.Context) (rs any, err error) {
 		var in *GetList2TestRequest
 		if err = ctx.BindJSON(&in); err != nil {
@@ -110,7 +130,30 @@ func _Test_ListUser20_GIN_HTTP_Handler(srv TestGinHttpService) router.Fn {
 		if err != nil {
 			return
 		}
-		rs, err = srv.ListUser2(ctx, in)
+		ctx.Set("operation", OperationGinTestListUser2)
+		rs, err = s.srv.ListUser2(ctx, in)
 		return
+	}
+}
+
+func (s *TestGinHttpRouterService) UpdateUser() router.Fn {
+	return func(ctx *gin.Context) (rs any, err error) {
+		var in *UpdateUserRequest
+		if err = ctx.ShouldBind(&in); err != nil {
+			return
+		}
+		err = validate.Validate(in)
+		if err != nil {
+			return
+		}
+		ctx.Set("operation", OperationGinTestUpdateUser)
+		rs, err = s.srv.UpdateUser(ctx, in)
+		return
+	}
+}
+func NewTestGinHttpRouterService(router *gin.RouterGroup, srv TestGinHttpService) *TestGinHttpRouterService {
+	return &TestGinHttpRouterService{
+		srv:    srv,
+		router: router,
 	}
 }

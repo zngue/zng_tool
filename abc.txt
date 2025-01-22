@@ -1,0 +1,7 @@
+go build -o  G:\go\bin\protoc-gen-gin-http.exe  .\cmd\protoc-gen-gin-http
+
+
+go build -o  G:\go\bin\protoc-gen-kratos-temp.exe  .\cmd\protoc-gen-kratos-temp
+
+
+go build -o  G:\go\bin\gout.exe  .\cmd\test

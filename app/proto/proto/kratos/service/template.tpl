@@ -1,6 +1,8 @@
 package data
 import (
 	"context"
+    pb "github.com/zngue/zng_tool/api/test/v1"
+    "github.com/zngue/zng_tool/demo/biz"
 )
 {{$svrName := .ServiceName}}
 type {{$svrName}}Service struct {
@@ -14,12 +16,12 @@ func New{{$svrName}}Service({{LowerFirst $svrName}}UseCase *biz.{{$svrName}}UseC
 }
 {{- range .Methods }}
 func ({{FirstIndex $svrName}} *{{$svrName}}Service) {{.Name}}(ctx context.Context,req *pb.{{.RequestType}}) (*pb.{{.ReturnType}},  error) {
-	//TODO implement me
-	{{if IsAutoReq .RequestType}}
+	{{if IsAutoReq .RequestType -}}
 	var reqData  *biz.{{.RequestType}}
-	{{else}}
-		{{FirstIndex $svrName}}.{{LowerFirst $svrName}}UseCase.{{.Name}}(ctx, {{ ParamsSet .RequestDefault .RequestType }})
-	{{end}}
+	{{FirstIndex $svrName}}.{{LowerFirst $svrName}}UseCase.{{.Name}}(ctx,reqData)
+	{{- else -}}
+		err:={{FirstIndex $svrName}}.{{LowerFirst $svrName}}UseCase.{{.Name}}(ctx, {{ ParamsSet .RequestDefault .RequestType }})
+	{{- end}}
 	return &pb.{{.ReturnType}}{}, nil
 }
 {{- end}}
