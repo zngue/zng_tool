@@ -20,6 +20,7 @@ func main() {
 	}
 	opts.Run(func(gen *protogen.Plugin) error {
 		files := gen.Files
+
 		for _, file := range files {
 			fileName := file.GeneratedFilenamePrefix + ".gin_http.pb.go"
 			g := gen.NewGeneratedFile(fileName, file.GoImportPath)
@@ -40,12 +41,34 @@ func main() {
 					rule, ok := proto.GetExtension(method.Desc.Options(), annotations.E_Http).(*annotations.HttpRule)
 					if rule != nil && ok {
 						for _, bind := range rule.AdditionalBindings {
-							sd.Methods = append(sd.Methods, buildHTTPRule(g, serverIndex, methodIndex, service, method, bind))
+							sd.Methods = append(sd.Methods, buildHTTPRule(&HTTPRuleData{
+								GeneratedFile: g,
+								ServerIndex:   serverIndex,
+								MethodIndex:   methodIndex,
+								Service:       service,
+								Method:        method,
+								Rule:          bind,
+							}))
 						}
-						sd.Methods = append(sd.Methods, buildHTTPRule(g, serverIndex, methodIndex, service, method, rule))
+						sd.Methods = append(sd.Methods, buildHTTPRule(&HTTPRuleData{
+							GeneratedFile: g,
+							ServerIndex:   serverIndex,
+							MethodIndex:   methodIndex,
+							Service:       service,
+							Method:        method,
+							Rule:          rule,
+						}))
+
 					} else if omitemptyPrefix != "" {
 						path := fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), method.Desc.Name())
-						sd.Methods = append(sd.Methods, buildMethodDesc(g, serverIndex, methodIndex, method, http.MethodGet, path))
+						sd.Methods = append(sd.Methods, buildMethodDesc(&MethodDescReq{
+							GeneratedFile: g,
+							Method:        method,
+							MethodType:    http.MethodGet,
+							Path:          path,
+							MethodIndex:   methodIndex,
+							ServerIndex:   serverIndex,
+						}))
 					}
 				}
 				serverContent := sd.execute()

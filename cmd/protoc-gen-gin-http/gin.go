@@ -33,13 +33,22 @@ type ServiceDesc struct {
 	Methods     []*MethodDesc
 }
 
-func buildHTTPRule(g *protogen.GeneratedFile, serverIndex, methodIndex int, service *protogen.Service, m *protogen.Method, rule *annotations.HttpRule) *MethodDesc {
+type HTTPRuleData struct {
+	GeneratedFile *protogen.GeneratedFile
+	ServerIndex,
+	MethodIndex int
+	Service *protogen.Service
+	Method  *protogen.Method
+	Rule    *annotations.HttpRule
+}
+
+func buildHTTPRule(req *HTTPRuleData) *MethodDesc {
 	var (
 		path   string
 		method string
 		body   string
 	)
-	switch pattern := rule.Pattern.(type) {
+	switch pattern := req.Rule.Pattern.(type) {
 	case *annotations.HttpRule_Get:
 		path = pattern.Get
 		method = http.MethodGet
@@ -63,10 +72,17 @@ func buildHTTPRule(g *protogen.GeneratedFile, serverIndex, methodIndex int, serv
 		method = http.MethodPost
 	}
 	if path == "" {
-		path = fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), m.Desc.Name())
+		path = fmt.Sprintf("%s/%s/%s", omitemptyPrefix, req.Service.Desc.FullName(), req.Method.Desc.Name())
 	}
-	body = rule.Body
-	md := buildMethodDesc(g, serverIndex, methodIndex, m, method, path)
+	body = req.Rule.Body
+	md := buildMethodDesc(&MethodDescReq{
+		GeneratedFile: req.GeneratedFile,
+		Method:        req.Method,
+		MethodType:    method,
+		Path:          path,
+		MethodIndex:   req.MethodIndex,
+		ServerIndex:   req.ServerIndex,
+	})
 	if method == http.MethodGet || method == http.MethodDelete {
 		if body != "" {
 			_, _ = fmt.Fprintf(os.Stderr, "\u001B[31mWARN\u001B[m: %s %s body should not be declared.\n", method, path)
@@ -78,22 +94,30 @@ func buildHTTPRule(g *protogen.GeneratedFile, serverIndex, methodIndex int, serv
 	}
 	return md
 }
-func buildMethodDesc(g *protogen.GeneratedFile, serverIndex, methodIndex int, m *protogen.Method, method, path string) *MethodDesc {
-	comment := m.Comments.Leading.String() + m.Comments.Trailing.String()
+
+type MethodDescReq struct {
+	GeneratedFile *protogen.GeneratedFile
+	Method        *protogen.Method
+	MethodType,
+	Path string
+	MethodIndex,
+	ServerIndex int
+}
+
+func buildMethodDesc(req *MethodDescReq) *MethodDesc {
+	comment := req.Method.Comments.Leading.String() + req.Method.Comments.Trailing.String()
 	if comment != "" {
-		comment = "// " + m.GoName + strings.TrimPrefix(strings.TrimSuffix(comment, "\n"), "//")
+		comment = "// " + req.Method.GoName + strings.TrimPrefix(strings.TrimSuffix(comment, "\n"), "//")
 	}
 	return &MethodDesc{
-		Name:         m.GoName,
-		OriginalName: string(m.Desc.Name()),
-		MethodIndex:  methodIndex,
-		ServerIndex:  serverIndex,
-		//Request:      m.Input.GoIdent.GoName,
-		//Reply:        m.Output.GoIdent.GoName,
-		Request: g.QualifiedGoIdent(m.Input.GoIdent),
-		Reply:   g.QualifiedGoIdent(m.Output.GoIdent),
-		Comment: comment,
-		Path:    path,
-		Method:  method,
+		Name:         req.Method.GoName,
+		OriginalName: string(req.Method.Desc.Name()),
+		MethodIndex:  req.MethodIndex,
+		ServerIndex:  req.ServerIndex,
+		Request:      req.GeneratedFile.QualifiedGoIdent(req.Method.Input.GoIdent),
+		Reply:        req.GeneratedFile.QualifiedGoIdent(req.Method.Output.GoIdent),
+		Comment:      comment,
+		Path:         req.Path,
+		Method:       req.MethodType,
 	}
 }

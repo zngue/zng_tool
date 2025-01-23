@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
+	"github.com/zngue/zng_app/pkg/bind"
 )
 // 服务操作
 {{- range .Methods}}
@@ -27,26 +28,25 @@ type {{$svrType}}GinHttpRouterService struct {
 func (s *{{$svrType}}GinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
 	{{- range .Methods }}
-		router.{{FnName .Method}}(s.router, OperationGinUrl{{$svrType}}{{.OriginalName}}, s.{{.Name}}()),
+		router.{{FnName .Method}}(s.router, OperationGinUrl{{$svrType}}{{.OriginalName}}, s.{{.Name}}),
 	{{- end}}
 	)
 }
 {{- range .Methods }}
 {{.Comment}}
-func (s *{{$svrType}}GinHttpRouterService) {{.Name}}() router.Fn  {
-	return func(ctx *gin.Context) (rs any, err error) {
-		var in *{{.Request}}
-        if err = ctx.{{ BindType .Method }}(&in); err != nil {
-            return
-        }
-        err = validate.Validate(in)
-        if err != nil {
-            return
-        }
-        ctx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
-        rs, err = s.srv.{{.Name}}(ctx, in)
+func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ctx *gin.Context)  (rs any, err error)  {
+	var in {{.Request}}
+    err = bind.Bind(ctx,&in)
+    if err != nil {
         return
-	}
+    }
+    err = validate.Validate(&in)
+    if err != nil {
+        return
+    }
+    ctx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
+    rs, err = s.srv.{{.Name}}(ctx, &in)
+    return
 }
 {{- end}}
 func New{{$svrType}}GinHttpRouterService(router *gin.RouterGroup,srv {{$svrType}}GinHttpService)  *{{$svrType}}GinHttpRouterService {
