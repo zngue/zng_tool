@@ -7,3 +7,7 @@ go build -o  G:\go\bin\protoc-gen-kratos-temp.exe  .\cmd\protoc-gen-kratos-temp
 go build -o  G:\go\bin\gout.exe  .\cmd\test
 
 go build -o  G:\go\bin\zng.exe  .\cmd\zng
+
+
+go build -o  G:\go\bin\protoc-gen-gin-tmp.exe  .\cmd\protoc-gen-gin-tmp
+

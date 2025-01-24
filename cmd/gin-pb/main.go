@@ -9,24 +9,14 @@ import (
 
 func main() {
 
-	//接受第一个参数
-	if len(os.Args) <= 1 {
-		fmt.Println("请输入参数1")
-		return
-	}
-	var proto = os.Args[1]
-	if proto == "" {
-		fmt.Println("请输入proto文件名2")
-		return
-	}
-	//proto := "api/gin-pb/v1/gin-pb.proto"
-	path, err := exec.LookPath("protoc-gen-gin-http")
+	proto := "api/test/v1/test.proto"
+	path, err := exec.LookPath("protoc-gen-gin-tmp")
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 	if path == "" {
-		fmt.Println("请安装protoc-gen-gin-http 插件")
+		fmt.Println("请安装protoc-gen-gin-tmp 插件")
 		return
 	}
 	fmt.Println("文件所在路径是：", path)
@@ -40,6 +30,7 @@ func main() {
 		)
 	}
 	inputExt := []string{
+		"--gin-tmp_out=paths=source_relative:.",
 		"--go_out=paths=source_relative:.",
 		"--gin-http_out=paths=source_relative:.",
 	}

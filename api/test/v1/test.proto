@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package api.test.v1;
-option go_package = "github.com/zngue/zng_tool/api/gin-pb/v1;v1";
+option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 import "google/protobuf/empty.proto"; // 导入 Empty 类型
