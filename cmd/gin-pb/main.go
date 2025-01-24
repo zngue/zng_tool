@@ -19,7 +19,7 @@ func main() {
 		fmt.Println("请输入proto文件名2")
 		return
 	}
-	//proto := "api/test/v1/test.proto"
+	//proto := "api/gin-pb/v1/gin-pb.proto"
 	path, err := exec.LookPath("protoc-gen-gin-http")
 	if err != nil {
 		fmt.Println(err.Error())

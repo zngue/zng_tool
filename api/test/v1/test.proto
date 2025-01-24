@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package api.test.v1;
-option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
+option go_package = "github.com/zngue/zng_tool/api/gin-pb/v1;v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
 import "google/protobuf/empty.proto"; // 导入 Empty 类型
@@ -10,35 +10,35 @@ service Test {
   // 获取用户信息
   rpc Info (GetTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
-      get: "/v1/test/info"
+      get: "/v1/gin-pb/info"
     };
   }
   // 获取用户列表
   rpc List (GetListTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
-      get: "/v1/test/list"
+      get: "/v1/gin-pb/list"
     };
   }
   // 创建用户
   rpc Create (GetTestRequest) returns (GetTestReply) {
     option (google.api.http) = {
-      post: "/v1/test/create"
+      post: "/v1/gin-pb/create"
       body: "*"
     };
   }
   rpc ListUser (GetListTestRequest) returns (UserList) {
     option (google.api.http) = {
-      get: "/v1/test/list_user"
+      get: "/v1/gin-pb/list_user"
     };
   }
   rpc ListUser2 (GetList2TestRequest) returns (UserList2Rely) {
     option (google.api.http) = {
-      get: "/v1/test/list_user2"
+      get: "/v1/gin-pb/list_user2"
     };
   }
   rpc UpdateUser (UpdateUserRequest) returns (google.protobuf.Empty ) {
     option (google.api.http) = {
-      post: "/v1/test/updateUser"
+      post: "/v1/gin-pb/updateUser"
       body: "*"
     };
   }

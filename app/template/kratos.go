@@ -19,7 +19,7 @@ var kratosTmp = &cobra.Command{
 	Long:  `zng: zng proto`,
 	Short: "template zng tmp kt",
 	Run: func(cmd *cobra.Command, args []string) {
-		inPath := "api/test/v1/test.proto"
+		inPath := "api/gin-pb/v1/gin-pb.proto"
 		filepath.Join()
 		var (
 			out     string

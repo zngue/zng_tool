@@ -23,7 +23,7 @@ type MethodDesc struct {
 }
 
 func main() {
-	path := "api/test/v1/test.proto"
+	path := "api/gin-pb/v1/gin-pb.proto"
 	reader, err := os.Open(path)
 	if err != nil {
 		log.Fatal(err)

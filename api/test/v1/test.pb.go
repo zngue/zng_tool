@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v3.15.8
-// source: api/test/v1/test.proto
+// source: api/gin-pb/v1/gin-pb.proto
 
 package v1
 
@@ -498,7 +498,7 @@ type User struct {
 	Name     string    `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Age      int32     `protobuf:"varint,2,opt,name=age,proto3" json:"age,omitempty"`
 	UserExit *UserExit `protobuf:"bytes,3,opt,name=userExit,proto3" json:"userExit,omitempty"`
-	UserType UserType  `protobuf:"varint,4,opt,name=userType,proto3,enum=api.test.v1.UserType" json:"userType,omitempty"`
+	UserType UserType  `protobuf:"varint,4,opt,name=userType,proto3,enum=api.gin-pb.v1.UserType" json:"userType,omitempty"`
 	Data     *Data     `protobuf:"bytes,5,opt,name=data,proto3" json:"data,omitempty"`
 }
 
@@ -872,37 +872,37 @@ func file_api_test_v1_test_proto_rawDescGZIP() []byte {
 var file_api_test_v1_test_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_api_test_v1_test_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_api_test_v1_test_proto_goTypes = []interface{}{
-	(UserType)(0),               // 0: api.test.v1.UserType
-	(*UpdateUserRequest)(nil),   // 1: api.test.v1.UpdateUserRequest
-	(*GetList2TestRequest)(nil), // 2: api.test.v1.GetList2TestRequest
-	(*UserList2Rely)(nil),       // 3: api.test.v1.UserList2Rely
-	(*GetListTestRequest)(nil),  // 4: api.test.v1.GetListTestRequest
-	(*GetTestRequest)(nil),      // 5: api.test.v1.GetTestRequest
-	(*GetTestReply)(nil),        // 6: api.test.v1.GetTestReply
-	(*User)(nil),                // 7: api.test.v1.User
-	(*Data)(nil),                // 8: api.test.v1.Data
-	(*UserExit)(nil),            // 9: api.test.v1.UserExit
-	(*UserList)(nil),            // 10: api.test.v1.UserList
+	(UserType)(0),               // 0: api.gin-pb.v1.UserType
+	(*UpdateUserRequest)(nil),   // 1: api.gin-pb.v1.UpdateUserRequest
+	(*GetList2TestRequest)(nil), // 2: api.gin-pb.v1.GetList2TestRequest
+	(*UserList2Rely)(nil),       // 3: api.gin-pb.v1.UserList2Rely
+	(*GetListTestRequest)(nil),  // 4: api.gin-pb.v1.GetListTestRequest
+	(*GetTestRequest)(nil),      // 5: api.gin-pb.v1.GetTestRequest
+	(*GetTestReply)(nil),        // 6: api.gin-pb.v1.GetTestReply
+	(*User)(nil),                // 7: api.gin-pb.v1.User
+	(*Data)(nil),                // 8: api.gin-pb.v1.Data
+	(*UserExit)(nil),            // 9: api.gin-pb.v1.UserExit
+	(*UserList)(nil),            // 10: api.gin-pb.v1.UserList
 	(*empty.Empty)(nil),         // 11: google.protobuf.Empty
 }
 var file_api_test_v1_test_proto_depIdxs = []int32{
-	7,  // 0: api.test.v1.UserList2Rely.user:type_name -> api.test.v1.User
-	9,  // 1: api.test.v1.User.userExit:type_name -> api.test.v1.UserExit
-	0,  // 2: api.test.v1.User.userType:type_name -> api.test.v1.UserType
-	8,  // 3: api.test.v1.User.data:type_name -> api.test.v1.Data
-	7,  // 4: api.test.v1.UserList.user:type_name -> api.test.v1.User
-	5,  // 5: api.test.v1.Test.Info:input_type -> api.test.v1.GetTestRequest
-	4,  // 6: api.test.v1.Test.List:input_type -> api.test.v1.GetListTestRequest
-	5,  // 7: api.test.v1.Test.Create:input_type -> api.test.v1.GetTestRequest
-	4,  // 8: api.test.v1.Test.ListUser:input_type -> api.test.v1.GetListTestRequest
-	2,  // 9: api.test.v1.Test.ListUser2:input_type -> api.test.v1.GetList2TestRequest
-	1,  // 10: api.test.v1.Test.UpdateUser:input_type -> api.test.v1.UpdateUserRequest
-	6,  // 11: api.test.v1.Test.Info:output_type -> api.test.v1.GetTestReply
-	6,  // 12: api.test.v1.Test.List:output_type -> api.test.v1.GetTestReply
-	6,  // 13: api.test.v1.Test.Create:output_type -> api.test.v1.GetTestReply
-	10, // 14: api.test.v1.Test.ListUser:output_type -> api.test.v1.UserList
-	3,  // 15: api.test.v1.Test.ListUser2:output_type -> api.test.v1.UserList2Rely
-	11, // 16: api.test.v1.Test.UpdateUser:output_type -> google.protobuf.Empty
+	7,  // 0: api.gin-pb.v1.UserList2Rely.user:type_name -> api.gin-pb.v1.User
+	9,  // 1: api.gin-pb.v1.User.userExit:type_name -> api.gin-pb.v1.UserExit
+	0,  // 2: api.gin-pb.v1.User.userType:type_name -> api.gin-pb.v1.UserType
+	8,  // 3: api.gin-pb.v1.User.data:type_name -> api.gin-pb.v1.Data
+	7,  // 4: api.gin-pb.v1.UserList.user:type_name -> api.gin-pb.v1.User
+	5,  // 5: api.gin-pb.v1.Test.Info:input_type -> api.gin-pb.v1.GetTestRequest
+	4,  // 6: api.gin-pb.v1.Test.List:input_type -> api.gin-pb.v1.GetListTestRequest
+	5,  // 7: api.gin-pb.v1.Test.Create:input_type -> api.gin-pb.v1.GetTestRequest
+	4,  // 8: api.gin-pb.v1.Test.ListUser:input_type -> api.gin-pb.v1.GetListTestRequest
+	2,  // 9: api.gin-pb.v1.Test.ListUser2:input_type -> api.gin-pb.v1.GetList2TestRequest
+	1,  // 10: api.gin-pb.v1.Test.UpdateUser:input_type -> api.gin-pb.v1.UpdateUserRequest
+	6,  // 11: api.gin-pb.v1.Test.Info:output_type -> api.gin-pb.v1.GetTestReply
+	6,  // 12: api.gin-pb.v1.Test.List:output_type -> api.gin-pb.v1.GetTestReply
+	6,  // 13: api.gin-pb.v1.Test.Create:output_type -> api.gin-pb.v1.GetTestReply
+	10, // 14: api.gin-pb.v1.Test.ListUser:output_type -> api.gin-pb.v1.UserList
+	3,  // 15: api.gin-pb.v1.Test.ListUser2:output_type -> api.gin-pb.v1.UserList2Rely
+	11, // 16: api.gin-pb.v1.Test.UpdateUser:output_type -> google.protobuf.Empty
 	11, // [11:17] is the sub-list for method output_type
 	5,  // [5:11] is the sub-list for method input_type
 	5,  // [5:5] is the sub-list for extension type_name
