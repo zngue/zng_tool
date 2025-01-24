@@ -14,12 +14,12 @@ import (
 )
 
 // 服务操作
-const OperationGinTestInfo = "api.gin-pb.v1.Test.Info"
-const OperationGinTestList = "api.gin-pb.v1.Test.List"
-const OperationGinTestCreate = "api.gin-pb.v1.Test.Create"
-const OperationGinTestListUser = "api.gin-pb.v1.Test.ListUser"
-const OperationGinTestListUser2 = "api.gin-pb.v1.Test.ListUser2"
-const OperationGinTestUpdateUser = "api.gin-pb.v1.Test.UpdateUser"
+const OperationGinTestInfo = "api.test.v1.Test.Info"
+const OperationGinTestList = "api.test.v1.Test.List"
+const OperationGinTestCreate = "api.test.v1.Test.Create"
+const OperationGinTestListUser = "api.test.v1.Test.ListUser"
+const OperationGinTestListUser2 = "api.test.v1.Test.ListUser2"
+const OperationGinTestUpdateUser = "api.test.v1.Test.UpdateUser"
 
 // 服务url
 const OperationGinUrlTestInfo = "/v1/gin-pb/info"

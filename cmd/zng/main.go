@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/zngue/zng_tool/app/config"
+	"github.com/zngue/zng_tool/app/gin"
 	"github.com/zngue/zng_tool/app/project"
 	"github.com/zngue/zng_tool/app/proto"
 	"github.com/zngue/zng_tool/app/template"
@@ -24,6 +25,7 @@ func main() {
 		config.Init(),
 		proto.Init(),
 		template.Init(),
+		gin.ProtoCommand,
 	)
 	err = rootCmd.Execute()
 	if err != nil {

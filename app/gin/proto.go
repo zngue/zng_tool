@@ -1,24 +1,35 @@
-package main
+package gin
 
 import (
 	"fmt"
+	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 )
 
-func main() {
+var ProtoCommand = &cobra.Command{
+	Use:   "gb",
+	Short: "Generate gin code through PB zng gb test/abc.proto ",
+	Long:  `通过pb 生成 gin 的代码`,
+	Run:   Run,
+}
 
-	//接受第一个参数
-	if len(os.Args) <= 1 {
-		fmt.Println("请输入参数1")
+func Run(cmd *cobra.Command, args []string) {
+	if len(args) < 1 {
+		fmt.Println("参数错误")
 		return
 	}
-	var proto = os.Args[1]
-	if proto == "" {
-		fmt.Println("请输入proto文件名2")
+	protoPath := args[0]
+	if !strings.Contains(protoPath, ".proto") {
+		fmt.Println("请输入正确的文件")
 		return
 	}
+	Exec(protoPath)
+}
+
+func Exec(proto string) {
 	//proto := "api/gin-pb/v1/gin-pb.proto"
 	path, err := exec.LookPath("protoc-gen-gin-http")
 	if err != nil {
