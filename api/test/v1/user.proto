@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package api.test.v1;
+option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
+
+import "google/api/annotations.proto";
+
+service User{
+  rpc Info (AbcUserRequest) returns (AbcUserReply) {
+    option (google.api.http) = {
+      get: "/v1/gin-pb/info"
+    };
+  }
+}
+message AbcUserRequest{
+  string name = 1;
+}
+message AbcUserReply{
+  string message = 1;
+}

@@ -38,6 +38,6 @@ bin/
 .vscode/
 .idea/
 *.swp
-google/
-validate/
+./google/
+./validate/
 demo

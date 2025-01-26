@@ -2,6 +2,7 @@ package util
 
 import (
 	"github.com/emicklei/proto"
+	"golang.org/x/exp/constraints"
 	"os"
 	"unicode"
 	"unicode/utf8"
@@ -39,6 +40,20 @@ func WriteFile(fileName, content string) (err error) {
 	}(file)
 	_, err = file.WriteString(content)
 	return
+}
+
+// IsDir 判断文件夹是否存在不存在则创建
+func IsDir(path string) bool {
+	_, err := os.Stat(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			err = os.MkdirAll(path, os.ModePerm)
+			if err != nil {
+				return false
+			}
+		}
+	}
+	return true
 }
 
 // UpperLineToLower 驼峰转下划线
@@ -89,4 +104,12 @@ func DoParamsFile(msg *proto.Message, v *proto.NormalField) FileType {
 			return SystemNormal
 		}
 	}
+}
+func InArray[T constraints.Ordered](label T, labels []T) bool {
+	for _, v := range labels {
+		if label == v {
+			return true
+		}
+	}
+	return false
 }

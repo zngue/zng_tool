@@ -3,6 +3,9 @@ package main
 import (
 	"bytes"
 	_ "embed"
+	"fmt"
+	"github.com/zngue/zng_tool/app/util"
+	"google.golang.org/protobuf/compiler/protogen"
 	"strings"
 	"text/template"
 )
@@ -10,28 +13,69 @@ import (
 //go:embed template.tpl
 var httpTemplate string
 
+type ServiceDesc struct {
+	ServiceType      string
+	ServiceName      string
+	ServiceTypeName  string
+	Metadata         string
+	Methods          []*MethodDesc
+	GoPackageName    string
+	GoImportPath     string
+	MessageMap       map[string]*protogen.Message
+	GeneratedFile    *protogen.GeneratedFile
+	LowerServiceName string
+	MessageLessThree []string
+}
+type MethodDesc struct {
+	Name           string
+	OriginalName   string
+	MethodIndex    int
+	ServerIndex    int
+	Request        protogen.GoIdent
+	RequestDefault string
+	Reply          protogen.GoIdent
+	ReplyDefault   string
+	RequestMessage *protogen.Message
+	ReplyMessage   *protogen.Message
+	GoPackageName  string
+	ReplyLent      int
+	RequestLent    int
+}
+
 func (s *ServiceDesc) execute() string {
 	buf := new(bytes.Buffer)
 	funcMap := template.FuncMap{
-		//判断类型是否包含包名
-		"Type": func(useType string) string {
-			//if strings.Contains(useType, ".") {
-			//	return useType
-			//}
-			//return fmt.Sprintf("%s.%s", s.GoPackageName, useType)
-			return useType
+		"NameTo": func(useType protogen.GoIdent) string {
+			return s.GeneratedFile.QualifiedGoIdent(useType)
 		},
-		"EmptyVal": func() string {
-			for _, method := range s.Methods {
-				//判断是否包含空包 empty.Empty
-				if strings.Contains(method.Request, "empty") {
-					return "github.com/golang/protobuf/ptypes/empty"
+		"LowerFirst": util.LowerFirst,
+		"SetReqParams": func(req protogen.GoIdent) string {
+			var params []string
+			var useType = req.GoName
+			if val, ok := s.MessageMap[useType]; ok {
+				if len(val.Fields) > 3 {
+					params = append(params, "reqData")
+				} else {
+					for _, element := range val.Fields {
+						params = append(params, fmt.Sprintf("req.%s", element.GoName))
+					}
 				}
-				if strings.Contains(method.Reply, "empty") {
-					return "github.com/golang/protobuf/ptypes/empty"
+			} else {
+				params = append(params, "reqData")
+			}
+			return strings.Join(params, ",")
+		},
+		"OutParams": func(def string, req *protogen.Message) string {
+			var params []string
+			if len(req.Fields) > 3 {
+				params = append(params, def)
+			} else {
+				for _, element := range req.Fields {
+					params = append(params, util.LowerFirst(element.GoName))
 				}
 			}
-			return ""
+			params = append(params, "err")
+			return strings.Join(params, ",")
 		},
 	}
 	tmpl, err := template.New("service").Funcs(funcMap).Parse(strings.TrimSpace(httpTemplate))

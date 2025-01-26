@@ -61,7 +61,7 @@ message GetList2TestRequest{
 }
 message UserList2Rely {
   repeated User user = 1;
-  int32 total = 2;
+   int32 total = 2;
   int32 page = 3;
   int32 pageSize = 4;
   int32 order = 5;
@@ -71,7 +71,7 @@ message UserList2Rely {
 }
 
 message GetListTestRequest{
-  string name = 1;
+   string name = 1;
 }
 message GetTestRequest {
   string name = 1[(validate.rules).string.min_len = 1];
