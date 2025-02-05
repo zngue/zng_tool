@@ -64,7 +64,7 @@ func (s *ServiceDesc) ParamsTypeDel(def string, req *protogen.Message, pkg strin
 			msgType := util.MsgType(element)
 			var kind = element.Desc.Kind().String()
 			if kind == "message" {
-				kind = element.GoName
+				kind = element.Message.GoIdent.GoName
 			}
 			var val string
 			if pkg != "" {

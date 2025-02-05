@@ -1,11 +1,15 @@
 package project
 
 import (
+	"bufio"
 	"context"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/zngue/zng_tool/app"
+	"io"
 	"os"
+	"os/exec"
+	"runtime"
 )
 
 var (
@@ -29,9 +33,55 @@ var (
 				fmt.Println(err)
 			}
 			fmt.Println("项目创建成功")
+			fmt.Println(fmt.Sprintf("cd %s", name))
+			fmt.Println("go mod tidy")
+			//判断是否是windows
+			if IsWindows() {
+				command := exec.Command("cmd", "/c", fmt.Sprintf("cd %s  && go mod tidy", name))
+				var stdout io.ReadCloser
+				stdout, err = command.StdoutPipe() // 标准输出
+				if err != nil {
+					fmt.Println("222", err)
+				}
+				if err != nil {
+					fmt.Println(err)
+					return
+				}
+				err = command.Start() // 执行命令
+				if err != nil {
+					fmt.Println("333", err)
+				}
+				inputReader := bufio.NewReader(stdout)
+				for {
+					var line, errs = inputReader.ReadString('\n') // 一行一行地读取数据
+					if errs == io.EOF {                           //读取完成
+						break
+					}
+					fmt.Println(line)
+				}
+				if err = command.Wait(); err != nil {
+					fmt.Println("8888", err)
+				}
+
+				//标准输出
+			} else {
+				err := exec.Command("bash", "-c", fmt.Sprintf("cd %s  && go mod tidy", name)).Run()
+				if err != nil {
+					fmt.Println(err)
+				}
+			}
 		},
 	}
 )
+
+func IsWindows() bool {
+	if runtime.GOOS == "windows" {
+		return true
+	}
+	return false
+}
+
+//執行shell指令 区分windows 和Linux
 
 func run(name string, branch string) (err error) {
 	var (
@@ -56,5 +106,7 @@ func run(name string, branch string) (err error) {
 			name,
 		},
 	)
+	//cd name git pull go mod tidy
+
 	return
 }

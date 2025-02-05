@@ -8,9 +8,8 @@ import (
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/bind"
-	
 	"github.com/zngue/zng_app/pkg/router"
-	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/zngue/zng_app/pkg/validate"
 )
 
 // 服务操作

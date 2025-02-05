@@ -92,8 +92,8 @@ func Biz(gen *protogen.Plugin) (err error) {
 			buffer.WriteString(tmp)
 			s := buffer.String()
 			lowerName := util.UpperLineToLower(sd.ServiceType)
-			util.IsDir("./demo/biz")
-			err = util.WriteFile(fmt.Sprintf("./demo/biz/%s.go", lowerName), s)
+			util.IsDir("./internal/biz")
+			err = util.WriteFile(fmt.Sprintf("./internal/biz/%s.go", lowerName), s)
 			if err != nil {
 				fmt.Println("err", err)
 				return nil
@@ -102,8 +102,8 @@ func Biz(gen *protogen.Plugin) (err error) {
 			modelBuffer := &bytes.Buffer{}
 			modelBuffer.WriteString(modelTmp)
 			modelContent := modelBuffer.String()
-			util.IsDir("./demo/model")
-			err = util.WriteFile(fmt.Sprintf("./demo/model/%s.go", lowerName), modelContent)
+			util.IsDir("./internal/model")
+			err = util.WriteFile(fmt.Sprintf("./internal/model/%s.go", lowerName), modelContent)
 			if err != nil {
 				fmt.Println("err", err)
 				return nil
@@ -186,8 +186,8 @@ func Services(gen *protogen.Plugin) (err error) {
 			buffer.WriteString(string(content))
 			s := buffer.String()
 			lowerName := util.UpperLineToLower(sd.ServiceType)
-			util.IsDir("./demo/api")
-			err = util.WriteFile(fmt.Sprintf("./demo/api/%s.go", lowerName), s)
+			util.IsDir("./internal/api")
+			err = util.WriteFile(fmt.Sprintf("./internal/api/%s.go", lowerName), s)
 			if err != nil {
 				fmt.Println("err", err)
 				return nil
