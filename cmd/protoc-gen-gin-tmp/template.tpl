@@ -1,4 +1,4 @@
-package service
+package api
 {{$svrType := .ServiceType}}
 {{$svrName := .ServiceName}}
 import (
@@ -14,12 +14,14 @@ func New{{$svrType}}Service({{LowerFirst $svrType}} *biz.{{$svrType}}UseCase) {{
 }
 {{- range .Methods }}
 func (s *{{$svrType}}Service){{.Name}}(ctx *gin.Context, req *{{NameTo .Request}}) (rs *{{NameTo .Reply}}, err error){
-
-	//判断RequestLent 大于 3
-	{{ if gt .RequestLent 3 }}
-		var reqData {{NameTo .Request}}
-	{{ end }}
-	{{OutParams .ReplyDefault .ReplyMessage}}:=s.{{LowerFirst $svrType}}.{{.Name}}(ctx, {{SetReqParams .Request}})
+	{{- if gt .RequestLent 3 -}}
+		var reqData=&biz.{{.Request.GoName}}{}
+	{{- end }}
+	{{OutParams .ReplyDefault .ReplyMessage false}} s.{{LowerFirst $svrType}}.{{.Name}}(ctx, {{SetReqParams .Request}})
+	if err != nil {
+       return
+    }
+    fmt.Println("{{$svrType}}Service->{{.Name}}",{{OutParamsPrintln .ReplyDefault .ReplyMessage}})
     return
 }
-{{- end}}
+{{- end -}}

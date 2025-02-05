@@ -8,6 +8,13 @@ import (
 	"unicode/utf8"
 )
 
+func LowerIndex(s string) string {
+	if s == "" {
+		return ""
+	}
+	return string(unicode.ToLower(rune(s[0])))
+}
+
 // LowerFirst 首字母转小写
 func LowerFirst(s string) string {
 	if s == "" {

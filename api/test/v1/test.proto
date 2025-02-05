@@ -84,7 +84,6 @@ message User {
   string name = 1;
   int32 age = 2;
   UserExit userExit = 3;
-  UserType userType = 4;
   Data data = 5;
 
 }
@@ -100,6 +99,11 @@ message UserExit {
 message UserList {
   repeated User user = 1;
   int32 total = 2;
+  Abc abc = 3;
+
+}
+message Abc {
+  string name = 1;
 }
 enum UserType {
   USER_TYPE_UNSPECIFIED = 0;
