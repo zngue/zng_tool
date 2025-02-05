@@ -26,6 +26,7 @@ func main() {
 		proto.Init(),
 		template.Init(),
 		gin.ProtoCommand,
+		gin.TmpCommand,
 	)
 	err = rootCmd.Execute()
 	if err != nil {

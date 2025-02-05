@@ -5,7 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 type {{$svrType}}Service struct {
-	{{LowerFirst $svrType}} *biz.TestUseCase
+	{{LowerFirst $svrType}} *biz.{{$svrType}}UseCase
 }
 func New{{$svrType}}Service({{LowerFirst $svrType}} *biz.{{$svrType}}UseCase) {{.ServiceTypeName}}GinHttpService {
 	return &{{$svrType}}Service{
