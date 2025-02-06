@@ -33,6 +33,17 @@ func UpperFirst(s string) string {
 	return string(unicode.ToUpper(r)) + s[n:]
 }
 
+// FileExists 判断文件是否存在
+func FileExists(fileName string) bool {
+	_, err := os.Stat(fileName)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return false
+		}
+	}
+	return true
+}
+
 func WriteFile(fileName, content string) (err error) {
 	var file *os.File
 	file, err = os.Create(fileName)

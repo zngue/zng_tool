@@ -119,22 +119,10 @@ func (e UpdateUserRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e UpdateUserRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateUserRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = UpdateUserRequestValidationError{}
@@ -173,8 +161,8 @@ func (m *GetList2TestRequest) validate(all bool) error {
 
 	if _, ok := _GetList2TestRequest_Status_InLookup[m.GetStatus()]; !ok {
 		err := GetList2TestRequestValidationError{
-			field:  "Status",
-			reason: "value must be in list [0 1 2 3 4]",
+			field:  "status",
+			reason: "的值必须在列表中 [0 1 2 3 4]",
 		}
 		if !all {
 			return err
@@ -242,22 +230,10 @@ func (e GetList2TestRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e GetList2TestRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetList2TestRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = GetList2TestRequestValidationError{}
@@ -398,22 +374,10 @@ func (e UserList2RelyValidationError) ErrorName() string { return "UserList2Rely
 
 // Error satisfies the builtin error interface
 func (e UserList2RelyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUserList2Rely.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = UserList2RelyValidationError{}
@@ -502,22 +466,10 @@ func (e GetListTestRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e GetListTestRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetListTestRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = GetListTestRequestValidationError{}
@@ -553,10 +505,13 @@ func (m *GetTestRequest) validate(all bool) error {
 	var errors []error
 
 	if utf8.RuneCountInString(m.GetName()) < 1 {
-		err := GetTestRequestValidationError{
-			field:  "Name",
-			reason: "value length must be at least 1 runes",
+		var err error
+
+		err = GetTestRequestValidationError{
+			field:  "name",
+			reason: "的长度必须最少为 1",
 		}
+
 		if !all {
 			return err
 		}
@@ -565,8 +520,8 @@ func (m *GetTestRequest) validate(all bool) error {
 
 	if _, ok := _GetTestRequest_Status_InLookup[m.GetStatus()]; !ok {
 		err := GetTestRequestValidationError{
-			field:  "Status",
-			reason: "value must be in list [0 1 2 3 4]",
+			field:  "status",
+			reason: "的值必须在列表中 [0 1 2 3 4]",
 		}
 		if !all {
 			return err
@@ -624,22 +579,10 @@ func (e GetTestRequestValidationError) ErrorName() string { return "GetTestReque
 
 // Error satisfies the builtin error interface
 func (e GetTestRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetTestRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = GetTestRequestValidationError{}
@@ -733,22 +676,10 @@ func (e GetTestReplyValidationError) ErrorName() string { return "GetTestReplyVa
 
 // Error satisfies the builtin error interface
 func (e GetTestReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sGetTestReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = GetTestReplyValidationError{}
@@ -791,7 +722,7 @@ func (m *User) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UserValidationError{
-					field:  "UserExit",
+					field:  "userExit",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -799,7 +730,7 @@ func (m *User) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UserValidationError{
-					field:  "UserExit",
+					field:  "userExit",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -808,7 +739,7 @@ func (m *User) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetUserExit()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
-				field:  "UserExit",
+				field:  "userExit",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -820,7 +751,7 @@ func (m *User) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UserValidationError{
-					field:  "Data",
+					field:  "data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -828,7 +759,7 @@ func (m *User) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UserValidationError{
-					field:  "Data",
+					field:  "data",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -837,7 +768,7 @@ func (m *User) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserValidationError{
-				field:  "Data",
+				field:  "data",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -893,22 +824,10 @@ func (e UserValidationError) ErrorName() string { return "UserValidationError" }
 
 // Error satisfies the builtin error interface
 func (e UserValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUser.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = UserValidationError{}
@@ -993,22 +912,10 @@ func (e DataValidationError) ErrorName() string { return "DataValidationError" }
 
 // Error satisfies the builtin error interface
 func (e DataValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sData.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = DataValidationError{}
@@ -1098,22 +1005,10 @@ func (e UserExitValidationError) ErrorName() string { return "UserExitValidation
 
 // Error satisfies the builtin error interface
 func (e UserExitValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUserExit.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = UserExitValidationError{}
@@ -1189,7 +1084,7 @@ func (m *UserList) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, UserListValidationError{
-					field:  "Abc",
+					field:  "abc",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1197,7 +1092,7 @@ func (m *UserList) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, UserListValidationError{
-					field:  "Abc",
+					field:  "abc",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1206,7 +1101,7 @@ func (m *UserList) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetAbc()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return UserListValidationError{
-				field:  "Abc",
+				field:  "abc",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1262,22 +1157,10 @@ func (e UserListValidationError) ErrorName() string { return "UserListValidation
 
 // Error satisfies the builtin error interface
 func (e UserListValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUserList.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = UserListValidationError{}
@@ -1362,22 +1245,10 @@ func (e AbcValidationError) ErrorName() string { return "AbcValidationError" }
 
 // Error satisfies the builtin error interface
 func (e AbcValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sAbc.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = AbcValidationError{}
