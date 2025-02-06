@@ -109,9 +109,8 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 			msgType := util.MsgType(req)
 			var kind = req.Desc.Kind().String()
 			if kind == "message" {
-				kind = req.GoName
+				kind = req.Message.GoIdent.GoName
 			}
-
 			if req.Extendee != nil {
 				kind = fmt.Sprintf("%s_%s", req.Extendee.GoIdent.GoName, kind)
 			}
