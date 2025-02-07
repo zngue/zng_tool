@@ -17,11 +17,13 @@ func (s *MethodDesc) execute() (tmp string) {
 	case annotations.Action_add:
 		tmp = s.Add()
 	case annotations.Action_delete:
+		tmp = s.Del()
 	case annotations.Action_list:
 	case annotations.Action_list_page:
 	case annotations.Action_update:
 		tmp = s.Update()
 	case annotations.Action_query:
+		tmp = s.Query()
 	}
 	return
 }
@@ -55,11 +57,16 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			}
 			return strings.Join(params, "\n\t\t")
 		},
+
+		"ListWhereOperator": func(message *protogen.Message) string {
+			return ""
+		},
 		"UpdateWhereOperatorMore": func(message *protogen.Message) string {
 			var params []string
 			if len(message.Fields) > 3 {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
+					WriteContent("err_action.txt", fmt.Sprintf("%s_%s,这是操作信息", message.GoIdent.GoName, field.GoName))
 					if operator != validate.Operator_OPERATOR_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						content := Operator(name, fmt.Sprintf("req.%s", field.GoName), operator)
@@ -70,7 +77,8 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 				}
 			} else {
 				for _, field := range message.Fields {
-					operator, _ := DoFieldOperator(field)
+					operator, fileType := DoFieldOperator(field)
+					WriteContent("err_action.txt", fmt.Sprintf("%s_%s_%s_%s,这是操作信息666", message.GoIdent.GoName, field.GoName, operator, fileType))
 					if operator != validate.Operator_OPERATOR_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						content := Operator(name, util.LowerFirst(field.GoName), operator)
@@ -101,7 +109,7 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 					operator, _ := DoFieldOperator(field)
 					if operator == validate.Operator_OPERATOR_UNKNOWN {
 						var name = util.CamelToSnake(field.GoName)
-						params = append(params, fmt.Sprintf(" \"%s\" : req.%s", name, field.GoName))
+						params = append(params, fmt.Sprintf(" \"%s\" : req.%s,", name, field.GoName))
 					}
 				}
 			} else {
@@ -109,11 +117,12 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 					operator, _ := DoFieldOperator(field)
 					if operator == validate.Operator_OPERATOR_UNKNOWN {
 						var name = util.CamelToSnake(field.GoName)
-						params = append(params, fmt.Sprintf(" \"%s\" : %s", name, field.GoName))
+						params = append(params, fmt.Sprintf(" \"%s\" : %s,", name, field.GoName))
+
 					}
 				}
 			}
-			return strings.Join(params, ",\n\t\t")
+			return strings.Join(params, "\n\t\t")
 		},
 		"UpdateOperator": func(req *protogen.Field) string {
 			operator, _ := DoFieldOperator(req)
@@ -190,6 +199,36 @@ var updateTemplate string
 func (s *MethodDesc) Update() string {
 	buf := new(bytes.Buffer)
 	tmpl, err := template.New("update").Funcs(s.MapFn()).Parse(strings.TrimSpace(updateTemplate))
+	if err != nil {
+		panic(err)
+	}
+	if err = tmpl.Execute(buf, s); err != nil {
+		panic(err)
+	}
+	return strings.Trim(buf.String(), "\r\n")
+}
+
+//go:embed action/del.tpl
+var delTemplate string
+
+func (s *MethodDesc) Del() string {
+	buf := new(bytes.Buffer)
+	tmpl, err := template.New("del").Funcs(s.MapFn()).Parse(strings.TrimSpace(delTemplate))
+	if err != nil {
+		panic(err)
+	}
+	if err = tmpl.Execute(buf, s); err != nil {
+		panic(err)
+	}
+	return strings.Trim(buf.String(), "\r\n")
+}
+
+//go:embed action/query.tpl
+var queryTemplate string
+
+func (s *MethodDesc) Query() string {
+	buf := new(bytes.Buffer)
+	tmpl, err := template.New("query").Funcs(s.MapFn()).Parse(strings.TrimSpace(queryTemplate))
 	if err != nil {
 		panic(err)
 	}

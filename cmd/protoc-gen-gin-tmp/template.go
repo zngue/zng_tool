@@ -135,6 +135,20 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 		return
 	}
 	kind := req.Desc.Kind()
+	WriteContent("err_action_op.txt", fmt.Sprintf("%s_%s,这是操作信息", req.GoName, kind))
+	msgType := util.MsgType(req)
+	var msgKind = req.Desc.Kind().String()
+	if msgType == util.SystemRepeated {
+		if strings.Contains(msgKind, "int") {
+			filedType = "number"
+		} else {
+			filedType = "string"
+		}
+		operator = fieldRules.GetRepeated().GetOperator()
+		WriteContent("err_action_op.txt", fmt.Sprintf("%s_%s,这是操作信息6666", req.GoName, operator))
+		return
+	}
+
 	switch kind {
 	case protoreflect.Int32Kind, protoreflect.Int64Kind:
 		if intRules := fieldRules.GetInt32(); intRules != nil {
@@ -159,6 +173,10 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 		}
 	}
 	return
+}
+
+func DoKind() {
+
 }
 
 func FieldOperator(name string, req *protogen.Field) (operator validate.Operator, action validate.Action, filedType string) {

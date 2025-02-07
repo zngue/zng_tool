@@ -6,6 +6,7 @@ import "google/protobuf/descriptor.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
 
+//option go_package = "third_party/validate";
 option go_package = "github.com/envoyproxy/protoc-gen-validate/validate";
 option java_package = "io.envoyproxy.pgv.validate";
 
@@ -811,7 +812,7 @@ message RepeatedRules {
 
   //Msg custom error information
   optional string msg = 6;
-  optional string operator = 7;
+  optional Operator operator = 7;
   optional string action = 8;
 }
 

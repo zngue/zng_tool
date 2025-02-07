@@ -2,11 +2,10 @@
 {{$svrName := .ServiceName}}
 import (
 	"context"
-	"fmt"
-	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/gin-gonic/gin"
 )
 // 服务操作
 {{- range .Methods}}

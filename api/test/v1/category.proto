@@ -52,11 +52,13 @@ service Category {
     option (google.api.http) = {
       post: "/v1/category/delete"
       body: "*"
+      action:delete
     };
   }
   rpc Content(CategoryContentRequest) returns (CategoryContentReply){
     option (google.api.http) = {
       get: "/v1/category/content"
+      action:query
     };
   }
 }
@@ -122,10 +124,10 @@ message CategoryUpdateRequest{
   string baiduVerify = 13;
 }
 message CategoryDeleteRequest{
-  repeated int32 ids = 1 [(validate.rules).repeated = {min_items: 1,items:{int32:{gt:0}}}];
+  repeated int32 id = 1 [(validate.rules).repeated = {min_items: 1,items:{int32:{gt:0}},operator:in}];
 }
 message CategoryContentRequest{
-  int32 id = 1 [(validate.rules).int32 = {gte: 0}];
+  int32 id = 1 [(validate.rules).int32 = {gte: 0,operator:eq}];
 }
 message CategoryContentReply{
   CategoryItem item = 3;
