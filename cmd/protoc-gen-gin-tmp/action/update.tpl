@@ -1,14 +1,7 @@
-var where = make(map[string]any)
-{{- range .RequestMessage.Fields }}
-  {{- if UpdateWhereOperator . }}
-  {{ UpdateWhereOperator . }}
-  {{- end }}
-{{- end }}
+var where = map[string]any{
+		{{ UpdateWhereOperatorMore .RequestMessage }}
+	}
 	var updateData = map[string]any{
-{{- range .RequestMessage.Fields }}
-	{{- if UpdateOperator . }}
-		{{ UpdateOperator . }}
-	{{- end }}
-{{- end }}
+		{{ UpdateOperatorMore .RequestMessage }}
 	}
 	err=dbConn.Update(where, updateData)

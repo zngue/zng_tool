@@ -7,6 +7,7 @@ import (
 
 import (
 	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/bind"
 	
@@ -80,6 +81,7 @@ func (s *CategoryGinHttpRouterService) Add(ginCtx *gin.Context) (rs any, err err
 	if err != nil {
 		return
 	}
+	ginCtx.Set("operation", OperationGinCategoryAdd)
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryAdd)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
@@ -97,6 +99,7 @@ func (s *CategoryGinHttpRouterService) Update(ginCtx *gin.Context) (rs any, err 
 	if err != nil {
 		return
 	}
+	ginCtx.Set("operation", OperationGinCategoryUpdate)
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryUpdate)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
@@ -114,6 +117,7 @@ func (s *CategoryGinHttpRouterService) Delete(ginCtx *gin.Context) (rs any, err 
 	if err != nil {
 		return
 	}
+	ginCtx.Set("operation", OperationGinCategoryDelete)
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryDelete)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
@@ -131,6 +135,7 @@ func (s *CategoryGinHttpRouterService) Content(ginCtx *gin.Context) (rs any, err
 	if err != nil {
 		return
 	}
+	ginCtx.Set("operation", OperationGinCategoryContent)
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryContent)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)

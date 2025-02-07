@@ -1,3 +1,3 @@
 	err=dbConn.Add(&db.{{.SvrType}}{
-		{{ SetFiledNew .RequestMessage }}
+		{{ SetFiled .RequestMessage }}
 	})
