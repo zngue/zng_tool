@@ -46,6 +46,7 @@ func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ginCtx *gin.Context)  (rs a
     if err != nil {
         return
     }
+    ginCtx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
     ctx := ginCtx.Request.Context()
     ctx=context.WithValue(ctx,"operation", OperationGin{{$svrType}}{{.OriginalName}})
     ctx=context.WithValue(ctx, "gin_ctx", ginCtx)

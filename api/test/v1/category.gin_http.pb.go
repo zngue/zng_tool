@@ -62,6 +62,7 @@ func (s *CategoryGinHttpRouterService) List(ginCtx *gin.Context) (rs any, err er
 	if err != nil {
 		return
 	}
+	ginCtx.Set("operation", OperationGinCategoryList)
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryList)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
