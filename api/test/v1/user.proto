@@ -4,11 +4,13 @@ package api.test.v1;
 option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
 
 import "google/api/annotations.proto";
+import "validate/validate.proto";
 
 service User{
   rpc Info (AbcUserRequest) returns (AbcUserReply) {
     option (google.api.http) = {
-      get: "/v1/gin-pb/info"
+      get: "/v1/gin-pb/info",
+      action:add,
     };
   }
 }
@@ -17,4 +19,9 @@ message AbcUserRequest{
 }
 message AbcUserReply{
   string message = 1;
+  string name = 2 [(validate.rules).string={operator:like,action:add}];
+  int32 age = 3 [(validate.rules).int32={operator:eq}];
+  int32 sex = 4 [(validate.rules).int32={operator:eq}];
+  string image = 5;
+  string status = 6  [(validate.rules).string={operator:eq}];
 }

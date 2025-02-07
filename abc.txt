@@ -1,5 +1,16 @@
+go build -o  G:\go\bin\protoc-gen-gin-http.exe  .\cmd\protoc-gen-gin-http
 
-	NewUserService,
-	NewUestService,
-	NewTestService,
-	NewTestService,
+
+go build -o  G:\go\bin\protoc-gen-kratos-temp.exe  .\cmd\protoc-gen-kratos-temp
+
+
+go build -o  G:\go\bin\gout.exe  .\cmd\test
+
+go build -o  G:\go\bin\zng.exe  .\cmd\zng
+
+
+go build -o  G:\go\bin\protoc-gen-gin-tmp.exe  .\cmd\protoc-gen-gin-tmp
+
+protoc  --proto_path=./third_party  --go_out=.   third_party/validate/validate.proto
+
+protoc  --proto_path=./third_party  --go_out=.   third_party/google/api/http.proto

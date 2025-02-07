@@ -1,0 +1,132 @@
+syntax = "proto3";
+
+package api.test.v1;
+option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
+import "google/api/annotations.proto";
+import "validate/validate.proto";
+import "google/protobuf/empty.proto"; // 导入 Empty 类型
+/**
+CREATE TABLE `category` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` int(11) unsigned DEFAULT '0',
+  `template_id` int(11) unsigned DEFAULT '0',
+  `auto_list` tinyint(1) DEFAULT '1',
+  `name` varchar(50) DEFAULT NULL,
+  `is_automatic` tinyint(1) DEFAULT '0',
+  `auto_content` tinyint(1) DEFAULT '0',
+  `e_name` varchar(50) DEFAULT NULL,
+  `remark` varchar(200) DEFAULT NULL,
+  `image` varchar(512) DEFAULT NULL,
+  `sort` int(11) DEFAULT '0',
+  `status` tinyint(1) DEFAULT '0',
+  `baidu_verify` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `domain_id` (`domain_id`),
+  KEY `template_id` (`template_id`),
+  KEY `e_name` (`e_name`),
+  KEY `status` (`status`)
+) ENGINE=InnoDB AUTO_INCREMENT=116 DEFAULT CHARSET=utf8mb4;
+ */
+
+service Category {
+  rpc List(CategoryListRequest) returns (CategoryListReply){
+    option (google.api.http) = {
+      get: "/v1/category/list"
+    };
+  }
+  rpc Add(CategoryAddRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/category/add"
+      body: "*"
+      action:add
+    };
+  }
+  rpc Update(CategoryUpdateRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/category/update"
+      body: "*"
+      action:update
+    };
+  }
+  rpc Delete(CategoryDeleteRequest) returns (google.protobuf.Empty){
+    option (google.api.http) = {
+      post: "/v1/category/delete"
+      body: "*"
+    };
+  }
+  rpc Content(CategoryContentRequest) returns (CategoryContentReply){
+    option (google.api.http) = {
+      get: "/v1/category/content"
+    };
+  }
+}
+
+message CategoryListRequest {
+  int32 page = 1;
+  int32 pageSize = 2;
+  string name = 3;
+  string eName = 4;
+  int32 status = 5;
+  int32 domainId = 6;
+  int32 templateId = 7;
+}
+
+message CategoryListReply {
+  int32 count = 1;
+  repeated CategoryItem items = 2;
+}
+message CategoryItem{
+  int32 id = 1;
+  string name = 2;
+  string eName = 3;
+  int32 domainId = 4;
+  int32 templateId = 5;
+  int32 autoList = 6;
+  int32 isAutomatic = 7;
+  int32 autoContent = 8;
+  string remark = 9;
+  string image = 10;
+  int32 sort = 11;
+  int32 status = 12;
+  string baiduVerify = 13;
+  int32 createdAt = 14;
+  int32 updatedAt = 15;
+}
+message CategoryAddRequest{
+  string name = 1 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string eName = 2 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  int32 domainId = 3[(validate.rules).int32 = {gte: 0}];
+  int32 templateId = 4[(validate.rules).int32 = {gte: 0}];
+  int32 autoList = 5[(validate.rules).int32 = {gte: 0}];
+  int32 isAutomatic = 6[(validate.rules).int32 = {gte: 0}];
+  int32 autoContent = 7[(validate.rules).int32 = {gte: 0}];
+  string remark = 8;
+  string image = 9;
+  int32 sort = 10[(validate.rules).int32 = {gte: 0}];
+  int32 status = 11[(validate.rules).int32 = {gte: 0}];
+  string baiduVerify = 12;
+}
+message CategoryUpdateRequest{
+  int32 id = 1 [(validate.rules).int32 = {gte: 0,operator:eq}];
+  string name = 2 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  string eName = 3 [(validate.rules).string = {min_len: 1, max_len: 100}];
+  int32 domainId = 4[(validate.rules).int32 = {gte: 0}];
+  int32 templateId = 5[(validate.rules).int32 = {gte: 0}];
+  int32 autoList = 6[(validate.rules).int32 = {gte: 0}];
+  int32 isAutomatic = 7[(validate.rules).int32 = {gte: 0}];
+  int32 autoContent = 8[(validate.rules).int32 = {gte: 0}];
+  string remark = 9;
+  string image = 10;
+  int32 sort = 11[(validate.rules).int32 = {gte: 0}];
+  int32 status = 12[(validate.rules).int32 = {gte: 0}];
+  string baiduVerify = 13;
+}
+message CategoryDeleteRequest{
+  repeated int32 ids = 1 [(validate.rules).repeated = {min_items: 1,items:{int32:{gt:0}}}];
+}
+message CategoryContentRequest{
+  int32 id = 1 [(validate.rules).int32 = {gte: 0}];
+}
+message CategoryContentReply{
+  CategoryItem item = 3;
+}

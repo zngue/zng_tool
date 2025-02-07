@@ -40,14 +40,42 @@ service Test {
     option (google.api.http) = {
       post: "/v1/gin-pb/updateUser"
       body: "*"
+      action:update
+    };
+  }
+  rpc AddUser (AddUserRequest) returns (GetTestReply) {
+    option (google.api.http) = {
+      post: "/v1/gin-pb/addUser"
+      body: "*"
+      action:add
+    };
+  }
+  rpc AddUserMore (AddUserMoreRequest) returns (GetTestReply) {
+    option (google.api.http) = {
+      post: "/v1/gin-pb/addUser"
+      body: "*"
+      action:add,
     };
   }
 }
+message AddUserMoreRequest{
+  string name = 1;
+  int32 age = 2;
+  string image = 3;
+  string image2 = 4;
+  string image3 = 5;
+  string image4 = 6;
+  string image5 = 7;
+}
+message AddUserRequest{
+  string name = 1;
+  int32 age = 2;
+}
 message UpdateUserRequest{
-  int32 id = 1; // id
-  string name = 2; // 姓名
+  int32 id = 1 [(validate.rules).int32={gt:0,operator:eq}]; // id
+  string name = 2[(validate.rules).string={operator:like,min_len:1}]; // 姓名
   int32 age = 3;
-  int32 sex = 4;
+  int32 sex = 4[(validate.rules).int32={operator:gt}];
   string image = 5;
 }
 
@@ -75,7 +103,7 @@ message GetListTestRequest{
 }
 message GetTestRequest {
   string name = 1[(validate.rules).string.min_len = 1];
-  int32 status = 2 [(validate.rules).int32 = {in:[0, 1, 2, 3, 4]}];
+  int32 status = 2 [(validate.rules).int32 = {in:[0, 1, 2, 3, 4],operator:in}];
 }
 message GetTestReply {
   string message = 1;

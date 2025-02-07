@@ -1,6 +1,8 @@
 {{$svrType := .ServiceType}}
 {{$svrName := .ServiceName}}
 import (
+	"context"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
@@ -17,7 +19,7 @@ const OperationGinUrl{{$svrType}}{{.OriginalName}}="{{.Path}}"
 //服务接口 {{- .Comment }}
 type {{$svrType}}GinHttpService interface {
 	{{- range .Methods }}
-	{{.Name}}(ctx *gin.Context, req *{{.Request}}) (rs *{{.Reply}}, err error)
+	{{.Name}}(ctx context.Context, req *{{.Request}}) (rs *{{.Reply}}, err error)
 	{{- end}}
 }
 type {{$svrType}}GinHttpRouterService struct {
@@ -34,9 +36,9 @@ func (s *{{$svrType}}GinHttpRouterService) Register() []router.IRouter {
 }
 {{- range .Methods }}
 {{.Comment}}
-func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ctx *gin.Context)  (rs any, err error)  {
+func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ginCtx *gin.Context)  (rs any, err error)  {
 	var in {{.Request}}
-    err = bind.Bind(ctx,&in)
+    err = bind.Bind(ginCtx,&in)
     if err != nil {
         return
     }
@@ -44,7 +46,9 @@ func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ctx *gin.Context)  (rs any,
     if err != nil {
         return
     }
-    ctx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
+    ctx := ginCtx.Request.Context()
+    ctx=context.WithValue(ctx,"operation", OperationGin{{$svrType}}{{.OriginalName}})
+    ctx=context.WithValue(ctx, "gin_ctx", ginCtx)
     rs, err = s.srv.{{.Name}}(ctx, &in)
     return
 }

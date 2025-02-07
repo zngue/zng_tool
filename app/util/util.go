@@ -4,10 +4,28 @@ import (
 	"github.com/emicklei/proto"
 	"golang.org/x/exp/constraints"
 	"os"
+	"strings"
 	"unicode"
 	"unicode/utf8"
 )
 
+// CamelToSnake 驼峰转下划线
+func CamelToSnake(s string) string {
+	var result strings.Builder
+	// 处理首字母，直接转小写
+	result.WriteRune(unicode.ToLower(rune(s[0])))
+	// 遍历剩余字符
+	for i := 1; i < len(s); i++ {
+		r := rune(s[i])
+		if unicode.IsUpper(r) { // 遇到大写
+			result.WriteByte('_') // 加下划线
+			result.WriteRune(unicode.ToLower(r))
+		} else {
+			result.WriteRune(r)
+		}
+	}
+	return result.String()
+}
 func LowerIndex(s string) string {
 	if s == "" {
 		return ""

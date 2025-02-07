@@ -5,28 +5,12 @@ import (
 	"flag"
 	"fmt"
 	"github.com/zngue/zng_tool/app/util"
+	"github.com/zngue/zng_tool/third_party/google/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
-	"os"
-	"regexp"
-	"strings"
-	"text/template"
+	"google.golang.org/protobuf/proto"
 )
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
-
-const ReqTemp = `
-var reqData=Name{
-	
-}
-`
-
-func ReqTempFn() {
-	tmpl, err := template.New("service").Parse(strings.TrimSpace(ReqTemp))
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(tmpl)
-}
 
 func Biz(gen *protogen.Plugin) (err error) {
 	for _, file := range gen.Files {
@@ -65,8 +49,12 @@ func Biz(gen *protogen.Plugin) (err error) {
 				if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 					continue
 				}
+
+				rule := proto.GetExtension(method.Desc.Options(), annotations.E_Http).(*annotations.HttpRule)
+				action := rule.Action
 				methodItems = append(methodItems, &MethodDesc{
 					Name:           method.GoName,
+					Action:         action,
 					OriginalName:   string(method.Desc.Name()),
 					MethodIndex:    methodIndex,
 					ServerIndex:    serverIndex,
@@ -100,12 +88,6 @@ func Biz(gen *protogen.Plugin) (err error) {
 			}
 			bizServiceName := fmt.Sprintf("New%sUseCase", sd.ServiceType)
 			ReplaceWire("./internal/biz", "biz", bizServiceName, "biz")
-			//util.IsDir("./internal/biz")
-			//err = util.WriteFile(fmt.Sprintf("./internal/biz/%s.go", lowerName), s)
-			//if err != nil {
-			//	fmt.Println("err", err)
-			//	return nil
-			//}
 			modelTmp := sd.modelExecute()
 			modelBuffer := &bytes.Buffer{}
 			modelBuffer.WriteString(modelTmp)
@@ -116,12 +98,8 @@ func Biz(gen *protogen.Plugin) (err error) {
 			}
 			modelServiceName := fmt.Sprintf("New%sRepo", sd.ServiceType)
 			ReplaceWire("./internal/model", "data", modelServiceName, "model")
-			//util.IsDir("./internal/model")
-			//err = util.WriteFile(fmt.Sprintf("./internal/model/%s.go", lowerName), modelContent)
-			//if err != nil {
-			//	fmt.Println("err", err)
-			//	return nil
-			//}
+			//创建db
+			dbReplace("./internal/model/db", lowerName, sd.ServiceType)
 		}
 		g.Skip()
 	}
@@ -212,69 +190,6 @@ func Services(gen *protogen.Plugin) (err error) {
 		g.Skip()
 	}
 	return
-}
-
-const wireTemplate = `
-package {{PKG}}
-import (
-	"github.com/google/wire"
-)
-var ProviderSet = wire.NewSet(
-	{{CONTENT}},
-)`
-
-func ReplaceWire(dir, fileName, serverName string, pkg string) {
-	fileName = fmt.Sprintf("%s/%s.go", dir, fileName)
-	//文件不存在则创建文件
-	if !util.FileExists(fileName) {
-		tmp := strings.ReplaceAll(wireTemplate, "{{PKG}}", pkg)
-		tmp = strings.ReplaceAll(tmp, "{{CONTENT}}", serverName)
-		err := util.WriteFile(fileName, tmp)
-		if err != nil {
-			return
-		}
-		return
-	}
-	readFile, err := os.ReadFile(fileName)
-	if err != nil {
-		return
-	}
-	re := regexp.MustCompile(`wire\.NewSet\(([\s\S]*?)\)`)
-	matches := re.FindStringSubmatch(string(readFile))
-	if len(matches) > 1 {
-		// matches[0] 是整个匹配的字符串，matches[1] 是括号内的内容
-		//将字符使用逗号分隔 并且去掉空格，和换行
-		var params []string
-		for _, param := range strings.Split(matches[1], ",") {
-			param = strings.TrimSpace(param)
-			if param != "" && !util.InArray(param, params) {
-				params = append(params, param)
-			}
-		}
-		////将新的加入
-		if !util.InArray(serverName, params) {
-			params = append(params, serverName)
-		}
-		////将新的替换
-		newContent := "\n\t" + strings.Join(params, ",\n\t") + ",\n"
-		newContent = strings.Replace(string(readFile), matches[1], newContent, 1)
-		err = util.WriteFile(fileName, newContent)
-		if err != nil {
-			return
-		}
-	} else {
-		tmp := strings.ReplaceAll(wireTemplate, "{{PKG}}", pkg)
-		tmp = strings.ReplaceAll(tmp, "{{CONTENT}}", serverName)
-		err = util.WriteFile(fileName, tmp)
-		if err != nil {
-			return
-		}
-	}
-}
-
-func WireFile(dir, fileName, content string) (err error) {
-	util.IsDir(dir)
-	return util.WriteFile(fmt.Sprintf("%s/%s.go", dir, fileName), content)
 }
 
 func main() {

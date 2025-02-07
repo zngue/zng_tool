@@ -17,7 +17,8 @@ syntax = "proto3";
 package google.api;
 
 option cc_enable_arenas = true;
-option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
+option go_package = "third_party/google/annotations;annotations";
+//option go_package = "google.golang.org/genproto/googleapis/api/annotations;annotations";
 option java_multiple_files = true;
 option java_outer_classname = "HttpProto";
 option java_package = "com.google.api";
@@ -363,8 +364,17 @@ message HttpRule {
   // not contain an `additional_bindings` field themselves (that is,
   // the nesting may only be one level deep).
   repeated HttpRule additional_bindings = 11;
+  Action action = 13;
 }
-
+enum Action{
+  ACTION_UNKNOWN = 0;
+  add = 1; //新增
+  delete = 2; //删除
+  update = 3; //修改
+  query = 4; //查询
+  list = 5; //列表
+  list_page = 6; //列表分页
+}
 // A custom pattern is used for defining custom HTTP verb.
 message CustomHttpPattern {
   // The name of this custom HTTP verb.

@@ -1,7 +1,9 @@
 package model
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
+	"fmt"
+	"github.com/zngue/zng_app/db/data"
 	"gorm.io/gorm"
 )
 
@@ -19,8 +21,14 @@ type {{$svrType}}Repo struct {
 }
 
 {{- range .Methods }}
-func ({{$lowerIndex}} *{{$svrType}}Repo) {{.Name}}(ctx *gin.Context, {{InParamsTypeModel .RequestDefault  .RequestMessage}}) ({{OutParamsTypeModel .ReplyDefault  .ReplyMessage}})  {
+// {{ .Name }} 请求方法 {{ .Action }}
+func ({{$lowerIndex}} *{{$svrType}}Repo) {{.Name}}(ctx context.Context, {{InParamsTypeModel .RequestDefault  .RequestMessage}}) ({{OutParamsTypeModel .ReplyDefault  .ReplyMessage}})  {
+	var conn = {{$lowerIndex}}.conn.WithContext(ctx)
+	var dbConn=data.NewDB[db.{{$svrType}}](conn)
+	{{ ModelContent .  $svrType }}
+	fmt.Println(dbConn)
 	//TODO implement me
 	panic("{{$svrType}}Repo->{{.Name}} implement me")
+	return
 }
 {{- end}}

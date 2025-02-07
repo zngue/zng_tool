@@ -5,7 +5,13 @@ import (
 	_ "embed"
 	"fmt"
 	"github.com/zngue/zng_tool/app/util"
+	"github.com/zngue/zng_tool/third_party/google/annotations"
+	"github.com/zngue/zng_tool/third_party/validate"
 	"google.golang.org/protobuf/compiler/protogen"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
+	"os"
 	"strings"
 	"text/template"
 )
@@ -36,6 +42,8 @@ type ServiceDesc struct {
 	UseMessage       []*protogen.Message
 }
 type MethodDesc struct {
+	Action         annotations.Action
+	SvrType        string //使用的时候赋值
 	Name           string
 	OriginalName   string
 	MethodIndex    int
@@ -100,12 +108,117 @@ func (s *ServiceDesc) ParamsTypeDel(def string, req *protogen.Message, pkg strin
 	}
 	return
 }
+
+//追加写入文件
+
+func WriteContent(fileName string, content string) {
+	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	// 追加写入内容
+	_, err = file.WriteString(content + "\n")
+	if err != nil {
+		return
+	}
+}
+
+func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType string) {
+	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
+	if !ok || options == nil {
+		return
+	}
+	rules := proto.GetExtension(options, validate.E_Rules)
+	fieldRules, ok := rules.(*validate.FieldRules)
+	if !ok || fieldRules == nil {
+		return
+	}
+	kind := req.Desc.Kind()
+	switch kind {
+	case protoreflect.Int32Kind, protoreflect.Int64Kind:
+		if intRules := fieldRules.GetInt32(); intRules != nil {
+			operator = intRules.GetOperator()
+			filedType = "number"
+		}
+	case protoreflect.FloatKind:
+		if floatRules := fieldRules.GetFloat(); floatRules != nil {
+			operator = floatRules.GetOperator()
+			filedType = "number"
+		}
+
+	case protoreflect.Uint32Kind, protoreflect.Uint64Kind:
+		if uintRules := fieldRules.GetUint32(); uintRules != nil {
+			operator = uintRules.GetOperator()
+			filedType = "number"
+		}
+	case protoreflect.StringKind:
+		if stringRules := fieldRules.GetString_(); stringRules != nil {
+			operator = stringRules.GetOperator()
+			filedType = "string"
+		}
+	}
+	return
+}
+
+func FieldOperator(name string, req *protogen.Field) (operator validate.Operator, action validate.Action, filedType string) {
+	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
+	if !ok || options == nil {
+		//将err 写入到文件
+		WriteContent("err.txt", fmt.Sprintf("%s,这是第一处错误", name))
+		return
+	}
+	rules := proto.GetExtension(options, validate.E_Rules)
+	fieldRules, ok := rules.(*validate.FieldRules)
+	if !ok || fieldRules == nil {
+		WriteContent("err.txt", fmt.Sprintf("%s,这是第二处错误", name))
+		return
+	}
+	kind := req.Desc.Kind()
+	switch kind {
+	case protoreflect.Int32Kind, protoreflect.Int64Kind:
+		if intRules := fieldRules.GetInt32(); intRules != nil {
+			operator = intRules.GetOperator()
+			action = intRules.GetAction()
+			filedType = "number"
+		}
+	case protoreflect.FloatKind:
+		if floatRules := fieldRules.GetFloat(); floatRules != nil {
+			operator = floatRules.GetOperator()
+			action = floatRules.GetAction()
+			filedType = "number"
+		}
+
+	case protoreflect.Uint32Kind, protoreflect.Uint64Kind:
+		if uintRules := fieldRules.GetUint32(); uintRules != nil {
+			operator = uintRules.GetOperator()
+			action = uintRules.GetAction()
+			filedType = "number"
+		}
+	case protoreflect.StringKind:
+		if stringRules := fieldRules.GetString_(); stringRules != nil {
+			operator = stringRules.GetOperator()
+			action = stringRules.GetAction()
+			filedType = "string"
+		}
+	}
+	return
+}
+
 func (s *ServiceDesc) MapFn() template.FuncMap {
 	return template.FuncMap{
+		"ModelContent": func(method *MethodDesc, svrType string) string {
+			method.SvrType = svrType
+			return method.execute()
+		},
 		"StructName": func(req *protogen.Message) string {
 			return string(req.Desc.FullName())
 		},
 		"StructType": func(req *protogen.Field) string {
+			var (
+				operator validate.Operator
+				action   validate.Action
+			)
 			msgType := util.MsgType(req)
 			var kind = req.Desc.Kind().String()
 			if kind == "message" {
@@ -114,19 +227,19 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 			if req.Extendee != nil {
 				kind = fmt.Sprintf("%s_%s", req.Extendee.GoIdent.GoName, kind)
 			}
-
+			operator, action, _ = FieldOperator(fmt.Sprintf("%s_%s", req.GoName, kind), req)
 			var val string
 			switch msgType {
 			case util.AutoRepeated:
-				val = fmt.Sprintf("%s []*%s", req.GoName, kind)
+				val = fmt.Sprintf("%s []*%s //%s", req.GoName, kind, operator)
 			case util.AutoNormal:
-				val = fmt.Sprintf("%s *%s", req.GoName, kind)
+				val = fmt.Sprintf("%s *%s //%s", req.GoName, kind, operator)
 			case util.SystemRepeated:
-				val = fmt.Sprintf("%s []%s", req.GoName, kind)
+				val = fmt.Sprintf("%s []%s //%s", req.GoName, kind, operator)
 			case util.SystemNormal:
-				val = fmt.Sprintf("%s %s", req.GoName, kind)
+				val = fmt.Sprintf("%s %s //%s", req.GoName, kind, fmt.Sprintf("%s_%s", operator, action))
 			default:
-				val = fmt.Sprintf("%s %s", req.GoName, kind)
+				val = fmt.Sprintf("%s %s //%s", req.GoName, kind, operator)
 			}
 			return val
 		},

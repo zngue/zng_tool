@@ -1,7 +1,7 @@
 package biz
 
 import (
-	"github.com/gin-gonic/gin"
+	"context"
 )
 
 {{- $svrType := .ServiceType -}}
@@ -10,7 +10,7 @@ import (
 {{$lowerIndex := .LowerIndex}}
 type {{$svrType}}Repo interface {
 	{{- range .Methods }}
-	{{.Name}}(ctx *gin.Context, {{InParamsType .RequestDefault  .RequestMessage}}) ({{OutParamsType .ReplyDefault  .ReplyMessage}})
+	{{.Name}}(ctx context.Context, {{InParamsType .RequestDefault  .RequestMessage}}) ({{OutParamsType .ReplyDefault  .ReplyMessage}})
 	{{- end}}
 }
 
@@ -30,7 +30,7 @@ func New{{$svrType}}UseCase({{$lowerServiceType}} {{$svrType}}Repo) *{{$svrType}
 	}
 }
 {{- range .Methods }}
-func ({{$lowerIndex}} *{{$svrType}}UseCase) {{.Name}}(ctx *gin.Context, {{InParamsType .RequestDefault  .RequestMessage}}) ({{OutParamsType .ReplyDefault  .ReplyMessage}}) {
+func ({{$lowerIndex}} *{{$svrType}}UseCase) {{.Name}}(ctx context.Context, {{InParamsType .RequestDefault  .RequestMessage}}) ({{OutParamsType .ReplyDefault  .ReplyMessage}}) {
 	{{OutParams .ReplyDefault .ReplyMessage true}} {{$lowerIndex}}.{{$lowerServiceType}}.{{.Name}}(ctx, {{InParamsSet .RequestDefault .RequestMessage}})
 	return
 }
