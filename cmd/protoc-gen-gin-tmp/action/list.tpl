@@ -1,5 +1,5 @@
 var (
-	    rs    []*db.Category
+	    rs    []*db.{{.SvrType}}
 	    where = make(map[string]any)
 	)
 	{{ ListWhereOperator .RequestMessage }}
