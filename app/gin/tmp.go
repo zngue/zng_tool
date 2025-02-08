@@ -37,6 +37,7 @@ func TmpExec(proto string) {
 	}
 	if path == "" {
 		fmt.Println("请安装protoc-gen-gin-tmp 插件")
+		fmt.Println("go install github.com/zngue/zng_tool/cmd/protoc-gen-gin-http@latest")
 		return
 	}
 	fmt.Println("文件所在路径是：", path)

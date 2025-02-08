@@ -1,14 +1,13 @@
 package project
 
 import (
-	"bufio"
 	"context"
 	"fmt"
 	"github.com/spf13/cobra"
 	"github.com/zngue/zng_tool/app"
-	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 )
 
@@ -33,46 +32,58 @@ var (
 				fmt.Println(err)
 			}
 			fmt.Println("项目创建成功")
-			fmt.Println(fmt.Sprintf("cd %s", name))
-			fmt.Println("go mod tidy")
-			//判断是否是windows
 			if IsWindows() {
-				command := exec.Command("cmd", "/c", fmt.Sprintf("cd %s  && go mod tidy", name))
-				var stdout io.ReadCloser
-				stdout, err = command.StdoutPipe() // 标准输出
-				if err != nil {
-					fmt.Println("222", err)
-				}
-				if err != nil {
+				fmt.Println(fmt.Sprintf("cd %s", name))
+				fmt.Println("go mod tidy")
+				ChangeDir(name)
+				execCmd := exec.Command("go", "mod", "tidy")
+				execCmd.Stdout = os.Stdout
+				execCmd.Stderr = os.Stderr
+				if err := execCmd.Run(); err != nil {
 					fmt.Println(err)
 					return
 				}
-				err = command.Start() // 执行命令
-				if err != nil {
-					fmt.Println("333", err)
-				}
-				inputReader := bufio.NewReader(stdout)
-				for {
-					var line, errs = inputReader.ReadString('\n') // 一行一行地读取数据
-					if errs == io.EOF {                           //读取完成
-						break
-					}
-					fmt.Println(line)
-				}
-				if err = command.Wait(); err != nil {
-					fmt.Println("8888", err)
-				}
-
-				//标准输出
 			} else {
-				err := exec.Command("bash", "-c", fmt.Sprintf("cd %s  && go mod tidy", name)).Run()
-				if err != nil {
+				execCmd := exec.Command("sh", fmt.Sprintf("cd %s && go mod tidy", name))
+				execCmd.Stdout = os.Stdout
+				execCmd.Stderr = os.Stderr
+				if err := execCmd.Run(); err != nil {
 					fmt.Println(err)
+					return
 				}
 			}
+
 		},
 	}
 )
+
+func ChangeDir(name string) {
+	currentDir, err := os.Getwd()
+	if err != nil {
+		fmt.Println("获取当前目录失败:", err)
+		return
+	}
+	// 目标目录（相对于当前目录）
+	targetDir := filepath.Join(currentDir, name)
+	// 切换目录
+	err = os.Chdir(targetDir)
+	if err != nil {
+		fmt.Println("切换目录失败:", err)
+		return
+	}
+	newDir, _ := os.Getwd()
+	fmt.Println("当前目录:", newDir)
+}
+
+func DoCmd(md string) {
+	execCmd := exec.Command("cmd", "-c", md)
+	execCmd.Stdout = os.Stdout
+	execCmd.Stderr = os.Stderr
+	if err := execCmd.Run(); err != nil {
+		fmt.Println(err)
+		return
+	}
+}
 
 func IsWindows() bool {
 	if runtime.GOOS == "windows" {
