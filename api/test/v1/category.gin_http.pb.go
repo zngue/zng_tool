@@ -9,46 +9,73 @@ import (
 	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/z
 	"github.com/zngue/zng_app/pkg/router"
-	"github.com/zngue/zng_app/pkg/validate"
+	"github.com/gin-gonic/gin"
 )
 
 // 服务操作
+const OperationGinCategoryListPage = "api.test.v1.Category.ListPage"
 const OperationGinCategoryList = "api.test.v1.Category.List"
 const OperationGinCategoryAdd = "api.test.v1.Category.Add"
 const OperationGinCategoryUpdate = "api.test.v1.Category.Update"
 const OperationGinCategoryDelete = "api.test.v1.Category.Delete"
 const OperationGinCategoryContent = "api.test.v1.Category.Content"
+const OperationGinCategoryStatus = "api.test.v1.Category.Status"
 
 // 服务url
+const OperationGinUrlCategoryListPage = "/v1/category/listPage"
 const OperationGinUrlCategoryList = "/v1/category/list"
 const OperationGinUrlCategoryAdd = "/v1/category/add"
 const OperationGinUrlCategoryUpdate = "/v1/category/update"
 const OperationGinUrlCategoryDelete = "/v1/category/delete"
 const OperationGinUrlCategoryContent = "/v1/category/content"
-
+const OperationGinUrlCategoryStatus = "/v1/category/status"
 // 服务接口
+//服务接口
 type CategoryGinHttpService interface {
-	List(ctx context.Context, req *CategoryListRequest) (rs *CategoryListReply, err error)
+	ListPage(ctx context.Context, req *CategoryListRequest) (rs *CategoryListReply, err error)
+	List(ctx context.Context, req *CategoryListRequest) (rs *CategoryInfoListReply, err error)
 	Add(ctx context.Context, req *CategoryAddRequest) (rs *empty.Empty, err error)
 	Update(ctx context.Context, req *CategoryUpdateRequest) (rs *empty.Empty, err error)
 	Delete(ctx context.Context, req *CategoryDeleteRequest) (rs *empty.Empty, err error)
 	Content(ctx context.Context, req *CategoryContentRequest) (rs *CategoryContentReply, err error)
+	Status(ctx context.Context, req *CategoryStatusRequest) (rs *empty.Empty, err error)
 }
 type CategoryGinHttpRouterService struct {
 	srv    CategoryGinHttpService
 	router *gin.RouterGroup
 }
-
 // 服务注册
+//服务注册
 func (s *CategoryGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
+		router.ApiGetFn(s.router, OperationGinUrlCategoryListPage, s.ListPage),
 		router.ApiGetFn(s.router, OperationGinUrlCategoryList, s.List),
 		router.ApiPostFn(s.router, OperationGinUrlCategoryAdd, s.Add),
 		router.ApiPostFn(s.router, OperationGinUrlCategoryUpdate, s.Update),
 		router.ApiPostFn(s.router, OperationGinUrlCategoryDelete, s.Delete),
 		router.ApiGetFn(s.router, OperationGinUrlCategoryContent, s.Content),
+		router.ApiPostFn(s.router, OperationGinUrlCategoryStatus, s.Status),
 	)
+}
+
+func (s *CategoryGinHttpRouterService) ListPage(ginCtx *gin.Context) (rs any, err error) {
+	var in CategoryListRequest
+	err = bind.Bind(ginCtx, &in)
+	if err != nil {
+		return
+	}
+	err = validate.Validate(&in)
+	if err != nil {
+		return
+	}
+	ginCtx.Set("operation", OperationGinCategoryListPage)
+	ctx := ginCtx.Request.Context()
+	ctx = context.WithValue(ctx, "operation", OperationGinCategoryListPage)
+	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	rs, err = s.srv.ListPage(ctx, &in)
+	return
 }
 
 func (s *CategoryGinHttpRouterService) List(ginCtx *gin.Context) (rs any, err error) {
@@ -138,6 +165,25 @@ func (s *CategoryGinHttpRouterService) Content(ginCtx *gin.Context) (rs any, err
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryContent)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
 	rs, err = s.srv.Content(ctx, &in)
+	return
+}
+
+// StatusStatus
+func (s *CategoryGinHttpRouterService) Status(ginCtx *gin.Context) (rs any, err error) {
+	var in CategoryStatusRequest
+	err = bind.Bind(ginCtx, &in)
+	if err != nil {
+		return
+	}
+	err = validate.Validate(&in)
+	if err != nil {
+		return
+	}
+	ginCtx.Set("operation", OperationGinCategoryStatus)
+	ctx := ginCtx.Request.Context()
+	ctx = context.WithValue(ctx, "operation", OperationGinCategoryStatus)
+	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	rs, err = s.srv.Status(ctx, &in)
 	return
 }
 func NewCategoryGinHttpRouterService(router *gin.RouterGroup, srv CategoryGinHttpService) *CategoryGinHttpRouterService {

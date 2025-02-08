@@ -35,6 +35,225 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on CategoryStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CategoryStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CategoryStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CategoryStatusRequestMultiError, or nil if none found.
+func (m *CategoryStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CategoryStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetId() < 0 {
+		var err error
+
+		err = CategoryStatusRequestValidationError{
+			field:  "id",
+			reason: "的值必须大于或等于0",
+		}
+
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if _, ok := _CategoryStatusRequest_Status_InLookup[m.GetStatus()]; !ok {
+		err := CategoryStatusRequestValidationError{
+			field:  "status",
+			reason: "的值必须在列表中 [1 2]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CategoryStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CategoryStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by CategoryStatusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CategoryStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CategoryStatusRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CategoryStatusRequestMultiError) AllErrors() []error { return m }
+
+// CategoryStatusRequestValidationError is the validation error returned by
+// CategoryStatusRequest.Validate if the designated constraints aren't met.
+type CategoryStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CategoryStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CategoryStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CategoryStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CategoryStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CategoryStatusRequestValidationError) ErrorName() string {
+	return "CategoryStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CategoryStatusRequestValidationError) Error() string {
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
+	}
+	return e.field + e.reason
+}
+
+var _ error = CategoryStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CategoryStatusRequestValidationError{}
+
+var _CategoryStatusRequest_Status_InLookup = map[int32]struct{}{
+	1: {},
+	2: {},
+}
+
+// Validate checks the field values on CategoryDB with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CategoryDB) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CategoryDB with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CategoryDBMultiError, or
+// nil if none found.
+func (m *CategoryDB) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CategoryDB) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for EName
+
+	// no validation rules for DomainId
+
+	// no validation rules for TemplateId
+
+	// no validation rules for AutoList
+
+	// no validation rules for IsAutomatic
+
+	if len(errors) > 0 {
+		return CategoryDBMultiError(errors)
+	}
+
+	return nil
+}
+
+// CategoryDBMultiError is an error wrapping multiple validation errors
+// returned by CategoryDB.ValidateAll() if the designated constraints aren't met.
+type CategoryDBMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CategoryDBMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CategoryDBMultiError) AllErrors() []error { return m }
+
+// CategoryDBValidationError is the validation error returned by
+// CategoryDB.Validate if the designated constraints aren't met.
+type CategoryDBValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CategoryDBValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CategoryDBValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CategoryDBValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CategoryDBValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CategoryDBValidationError) ErrorName() string { return "CategoryDBValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CategoryDBValidationError) Error() string {
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
+	}
+	return e.field + e.reason
+}
+
+var _ error = CategoryDBValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CategoryDBValidationError{}
+
 // Validate checks the field values on CategoryListRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -60,16 +279,6 @@ func (m *CategoryListRequest) validate(all bool) error {
 	// no validation rules for Page
 
 	// no validation rules for PageSize
-
-	// no validation rules for Name
-
-	// no validation rules for EName
-
-	// no validation rules for Status
-
-	// no validation rules for DomainId
-
-	// no validation rules for TemplateId
 
 	if len(errors) > 0 {
 		return CategoryListRequestMultiError(errors)
@@ -123,22 +332,10 @@ func (e CategoryListRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryListRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryListRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryListRequestValidationError{}
@@ -261,22 +458,10 @@ func (e CategoryListReplyValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryListReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryListReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryListReplyValidationError{}
@@ -288,6 +473,130 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CategoryListReplyValidationError{}
+
+// Validate checks the field values on CategoryInfoListReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CategoryInfoListReply) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CategoryInfoListReply with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CategoryInfoListReplyMultiError, or nil if none found.
+func (m *CategoryInfoListReply) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CategoryInfoListReply) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetItem() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CategoryInfoListReplyValidationError{
+						field:  fmt.Sprintf("Item[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CategoryInfoListReplyValidationError{
+						field:  fmt.Sprintf("Item[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CategoryInfoListReplyValidationError{
+					field:  fmt.Sprintf("Item[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CategoryInfoListReplyMultiError(errors)
+	}
+
+	return nil
+}
+
+// CategoryInfoListReplyMultiError is an error wrapping multiple validation
+// errors returned by CategoryInfoListReply.ValidateAll() if the designated
+// constraints aren't met.
+type CategoryInfoListReplyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CategoryInfoListReplyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CategoryInfoListReplyMultiError) AllErrors() []error { return m }
+
+// CategoryInfoListReplyValidationError is the validation error returned by
+// CategoryInfoListReply.Validate if the designated constraints aren't met.
+type CategoryInfoListReplyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CategoryInfoListReplyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CategoryInfoListReplyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CategoryInfoListReplyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CategoryInfoListReplyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CategoryInfoListReplyValidationError) ErrorName() string {
+	return "CategoryInfoListReplyValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CategoryInfoListReplyValidationError) Error() string {
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
+	}
+	return e.field + e.reason
+}
+
+var _ error = CategoryInfoListReplyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CategoryInfoListReplyValidationError{}
 
 // Validate checks the field values on CategoryItem with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -390,22 +699,10 @@ func (e CategoryItemValidationError) ErrorName() string { return "CategoryItemVa
 
 // Error satisfies the builtin error interface
 func (e CategoryItemValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryItem.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryItemValidationError{}
@@ -441,10 +738,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	var errors []error
 
 	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 100 {
-		err := CategoryAddRequestValidationError{
-			field:  "Name",
-			reason: "value length must be between 1 and 100 runes, inclusive",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "name",
+			reason: "的长度必须介于 1 和 100 之间",
 		}
+
 		if !all {
 			return err
 		}
@@ -452,10 +752,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if l := utf8.RuneCountInString(m.GetEName()); l < 1 || l > 100 {
-		err := CategoryAddRequestValidationError{
-			field:  "EName",
-			reason: "value length must be between 1 and 100 runes, inclusive",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "eName",
+			reason: "的长度必须介于 1 和 100 之间",
 		}
+
 		if !all {
 			return err
 		}
@@ -463,10 +766,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetDomainId() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "DomainId",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "domainId",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -474,10 +780,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetTemplateId() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "TemplateId",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "templateId",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -485,10 +794,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetAutoList() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "AutoList",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "autoList",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -496,10 +808,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetIsAutomatic() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "IsAutomatic",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "isAutomatic",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -507,10 +822,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetAutoContent() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "AutoContent",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "autoContent",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -522,10 +840,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	// no validation rules for Image
 
 	if m.GetSort() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "Sort",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "sort",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -533,10 +854,13 @@ func (m *CategoryAddRequest) validate(all bool) error {
 	}
 
 	if m.GetStatus() < 0 {
-		err := CategoryAddRequestValidationError{
-			field:  "Status",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryAddRequestValidationError{
+			field:  "status",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -597,22 +921,10 @@ func (e CategoryAddRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryAddRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryAddRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryAddRequestValidationError{}
@@ -648,10 +960,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetId() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "Id",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "id",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -659,10 +974,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 100 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "Name",
-			reason: "value length must be between 1 and 100 runes, inclusive",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "name",
+			reason: "的长度必须介于 1 和 100 之间",
 		}
+
 		if !all {
 			return err
 		}
@@ -670,10 +988,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if l := utf8.RuneCountInString(m.GetEName()); l < 1 || l > 100 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "EName",
-			reason: "value length must be between 1 and 100 runes, inclusive",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "eName",
+			reason: "的长度必须介于 1 和 100 之间",
 		}
+
 		if !all {
 			return err
 		}
@@ -681,10 +1002,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetDomainId() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "DomainId",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "domainId",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -692,10 +1016,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetTemplateId() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "TemplateId",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "templateId",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -703,10 +1030,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetAutoList() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "AutoList",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "autoList",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -714,10 +1044,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetIsAutomatic() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "IsAutomatic",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "isAutomatic",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -725,10 +1058,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetAutoContent() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "AutoContent",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "autoContent",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -740,10 +1076,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	// no validation rules for Image
 
 	if m.GetSort() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "Sort",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "sort",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -751,10 +1090,13 @@ func (m *CategoryUpdateRequest) validate(all bool) error {
 	}
 
 	if m.GetStatus() < 0 {
-		err := CategoryUpdateRequestValidationError{
-			field:  "Status",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryUpdateRequestValidationError{
+			field:  "status",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -815,22 +1157,10 @@ func (e CategoryUpdateRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryUpdateRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryUpdateRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryUpdateRequestValidationError{}
@@ -866,10 +1196,13 @@ func (m *CategoryDeleteRequest) validate(all bool) error {
 	var errors []error
 
 	if len(m.GetId()) < 1 {
-		err := CategoryDeleteRequestValidationError{
-			field:  "Id",
-			reason: "value must contain at least 1 item(s)",
+		var err error
+
+		err = CategoryDeleteRequestValidationError{
+			field:  "id",
+			reason: "的值必须最少包含 1 个元素",
 		}
+
 		if !all {
 			return err
 		}
@@ -880,10 +1213,13 @@ func (m *CategoryDeleteRequest) validate(all bool) error {
 		_, _ = idx, item
 
 		if item <= 0 {
-			err := CategoryDeleteRequestValidationError{
+			var err error
+
+			err = CategoryDeleteRequestValidationError{
 				field:  fmt.Sprintf("Id[%v]", idx),
-				reason: "value must be greater than 0",
+				reason: "的值必须大于0",
 			}
+
 			if !all {
 				return err
 			}
@@ -944,22 +1280,10 @@ func (e CategoryDeleteRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryDeleteRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryDeleteRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryDeleteRequestValidationError{}
@@ -995,10 +1319,13 @@ func (m *CategoryContentRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetId() < 0 {
-		err := CategoryContentRequestValidationError{
-			field:  "Id",
-			reason: "value must be greater than or equal to 0",
+		var err error
+
+		err = CategoryContentRequestValidationError{
+			field:  "id",
+			reason: "的值必须大于或等于0",
 		}
+
 		if !all {
 			return err
 		}
@@ -1057,22 +1384,10 @@ func (e CategoryContentRequestValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryContentRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryContentRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryContentRequestValidationError{}
@@ -1112,7 +1427,7 @@ func (m *CategoryContentReply) validate(all bool) error {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, CategoryContentReplyValidationError{
-					field:  "Item",
+					field:  "item",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1120,7 +1435,7 @@ func (m *CategoryContentReply) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, CategoryContentReplyValidationError{
-					field:  "Item",
+					field:  "item",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -1129,7 +1444,7 @@ func (m *CategoryContentReply) validate(all bool) error {
 	} else if v, ok := interface{}(m.GetItem()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return CategoryContentReplyValidationError{
-				field:  "Item",
+				field:  "item",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -1188,22 +1503,10 @@ func (e CategoryContentReplyValidationError) ErrorName() string {
 
 // Error satisfies the builtin error interface
 func (e CategoryContentReplyValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	if strings.Contains(e.reason, "syMsg") {
+		return strings.Trim(e.Reason(), "syMsg")
 	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCategoryContentReply.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
+	return e.field + e.reason
 }
 
 var _ error = CategoryContentReplyValidationError{}

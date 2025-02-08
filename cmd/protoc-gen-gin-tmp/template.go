@@ -135,7 +135,6 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 		return
 	}
 	kind := req.Desc.Kind()
-	WriteContent("err_action_op.txt", fmt.Sprintf("%s_%s,这是操作信息", req.GoName, kind))
 	msgType := util.MsgType(req)
 	var msgKind = req.Desc.Kind().String()
 	if msgType == util.SystemRepeated {
@@ -145,7 +144,6 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 			filedType = "string"
 		}
 		operator = fieldRules.GetRepeated().GetOperator()
-		WriteContent("err_action_op.txt", fmt.Sprintf("%s_%s,这是操作信息6666", req.GoName, operator))
 		return
 	}
 
@@ -183,13 +181,11 @@ func FieldOperator(name string, req *protogen.Field) (operator validate.Operator
 	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
 	if !ok || options == nil {
 		//将err 写入到文件
-		WriteContent("err.txt", fmt.Sprintf("%s,这是第一处错误", name))
 		return
 	}
 	rules := proto.GetExtension(options, validate.E_Rules)
 	fieldRules, ok := rules.(*validate.FieldRules)
 	if !ok || fieldRules == nil {
-		WriteContent("err.txt", fmt.Sprintf("%s,这是第二处错误", name))
 		return
 	}
 	kind := req.Desc.Kind()
@@ -232,35 +228,7 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 		"StructName": func(req *protogen.Message) string {
 			return string(req.Desc.FullName())
 		},
-		"StructType": func(req *protogen.Field) string {
-			var (
-				operator validate.Operator
-				action   validate.Action
-			)
-			msgType := util.MsgType(req)
-			var kind = req.Desc.Kind().String()
-			if kind == "message" {
-				kind = req.Message.GoIdent.GoName
-			}
-			if req.Extendee != nil {
-				kind = fmt.Sprintf("%s_%s", req.Extendee.GoIdent.GoName, kind)
-			}
-			operator, action, _ = FieldOperator(fmt.Sprintf("%s_%s", req.GoName, kind), req)
-			var val string
-			switch msgType {
-			case util.AutoRepeated:
-				val = fmt.Sprintf("%s []*%s //%s", req.GoName, kind, operator)
-			case util.AutoNormal:
-				val = fmt.Sprintf("%s *%s //%s", req.GoName, kind, operator)
-			case util.SystemRepeated:
-				val = fmt.Sprintf("%s []%s //%s", req.GoName, kind, operator)
-			case util.SystemNormal:
-				val = fmt.Sprintf("%s %s //%s", req.GoName, kind, fmt.Sprintf("%s_%s", operator, action))
-			default:
-				val = fmt.Sprintf("%s %s //%s", req.GoName, kind, operator)
-			}
-			return val
-		},
+		"StructType": util.StructType,
 		"NameTo": func(useType protogen.GoIdent) string {
 			return s.GeneratedFile.QualifiedGoIdent(useType)
 		},
@@ -366,7 +334,7 @@ func (s *ServiceDesc) bizExecute() string {
 	//小于三个的
 	var useMessage []*protogen.Message
 	for key, v := range s.MessageMap {
-		if !util.InArray[string](key, s.MessageLessThree) {
+		if !util.InArray[string](key, s.MessageLessThree) && key != fmt.Sprintf("%sDB", s.ServiceType) {
 			useMessage = append(useMessage, v)
 		}
 	}

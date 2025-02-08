@@ -99,7 +99,14 @@ func Biz(gen *protogen.Plugin) (err error) {
 			modelServiceName := fmt.Sprintf("New%sRepo", sd.ServiceType)
 			ReplaceWire("./internal/model", "data", modelServiceName, "model")
 			//创建db
-			dbReplace("./internal/model/db", lowerName, sd.ServiceType)
+			dbConn := DbReplace{
+				MessageMap:      sd.MessageMap,
+				ServerType:      sd.ServiceType,
+				LowerServerType: util.CamelToSnake(sd.ServiceType),
+				Pkg:             "db",
+			}
+			dbContent := dbConn.execute()
+			dbReplace("./internal/model/db", lowerName, dbContent)
 		}
 		g.Skip()
 	}

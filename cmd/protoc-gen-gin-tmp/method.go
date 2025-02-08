@@ -19,7 +19,9 @@ func (s *MethodDesc) execute() (tmp string) {
 	case annotations.Action_delete:
 		tmp = s.Del()
 	case annotations.Action_list:
+		tmp = s.List()
 	case annotations.Action_list_page:
+		tmp = s.ListPage()
 	case annotations.Action_update:
 		tmp = s.Update()
 	case annotations.Action_query:
@@ -59,14 +61,58 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 		},
 
 		"ListWhereOperator": func(message *protogen.Message) string {
-			return ""
+			var params []string
+			if len(message.Fields) > 3 {
+				for _, field := range message.Fields {
+					operator, fileType := DoFieldOperator(field)
+					if operator != validate.Operator_OPERATOR_UNKNOWN {
+						name := util.CamelToSnake(field.GoName)
+						msgType := util.MsgType(field)
+						where := ListOperator(name, fmt.Sprintf("req.%s", field.GoName), operator)
+						if msgType == util.SystemRepeated {
+							fileType = "repeated"
+						}
+						if where != "" {
+							op := &OperatorContent{
+								Operator:  operator,
+								FiledType: fileType,
+								Where:     where,
+								FiledName: field.GoName,
+							}
+							tmp := op.Execute()
+							if tmp != "" {
+								params = append(params, tmp)
+							}
+						}
+					}
+				}
+			} else {
+				for _, field := range message.Fields {
+					operator, fileType := DoFieldOperator(field)
+					if operator != validate.Operator_OPERATOR_UNKNOWN {
+						name := util.CamelToSnake(field.GoName)
+						where := ListOperator(name, util.LowerFirst(field.GoName), operator)
+						if where != "" {
+							op := &OperatorContent{
+								Operator:  operator,
+								FiledType: fileType,
+								Where:     where,
+							}
+							tmp := op.Execute()
+							if tmp != "" {
+								params = append(params, tmp)
+							}
+						}
+					}
+				}
+			}
+			return strings.Join(params, "\n\t")
 		},
 		"UpdateWhereOperatorMore": func(message *protogen.Message) string {
 			var params []string
 			if len(message.Fields) > 3 {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
-					WriteContent("err_action.txt", fmt.Sprintf("%s_%s,这是操作信息", message.GoIdent.GoName, field.GoName))
 					if operator != validate.Operator_OPERATOR_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						content := Operator(name, fmt.Sprintf("req.%s", field.GoName), operator)
@@ -77,8 +123,7 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 				}
 			} else {
 				for _, field := range message.Fields {
-					operator, fileType := DoFieldOperator(field)
-					WriteContent("err_action.txt", fmt.Sprintf("%s_%s_%s_%s,这是操作信息666", message.GoIdent.GoName, field.GoName, operator, fileType))
+					operator, _ := DoFieldOperator(field)
 					if operator != validate.Operator_OPERATOR_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						content := Operator(name, util.LowerFirst(field.GoName), operator)
@@ -89,18 +134,6 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 				}
 			}
 			return strings.Join(params, ",\n\t\t")
-		},
-		"UpdateWhereOperator": func(req *protogen.Field) string {
-			operator, filedType := DoFieldOperator(req)
-			if operator != 0 && filedType != "" {
-				switch filedType {
-				case "number":
-					//return Operator(req.GoName, operator)
-				case "string":
-					//return Operator(req.GoName, operator)
-				}
-			}
-			return ""
 		},
 		"UpdateOperatorMore": func(message *protogen.Message) string {
 			var params []string
@@ -117,22 +150,59 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 					operator, _ := DoFieldOperator(field)
 					if operator == validate.Operator_OPERATOR_UNKNOWN {
 						var name = util.CamelToSnake(field.GoName)
-						params = append(params, fmt.Sprintf(" \"%s\" : %s,", name, field.GoName))
+						params = append(params, fmt.Sprintf(" \"%s\" : %s,", name, util.LowerFirst(field.GoName)))
 
 					}
 				}
 			}
 			return strings.Join(params, "\n\t\t")
 		},
-		"UpdateOperator": func(req *protogen.Field) string {
-			operator, _ := DoFieldOperator(req)
-			if operator == validate.Operator_OPERATOR_UNKNOWN {
-				name := util.CamelToSnake(req.GoName)
-				return fmt.Sprintf("\"%s\": req.%s,", name, req.GoName)
-			}
-			return ""
-		},
 	}
+}
+func ListOperator(name, goName string, operator validate.Operator) (op string) {
+	switch operator {
+	case validate.Operator_eq:
+		var key = fmt.Sprintf("%s = ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_neq:
+		var key = fmt.Sprintf("%s != ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_in:
+		var key = fmt.Sprintf("%s in ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_not_in:
+		var key = fmt.Sprintf("%s not in ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_gt:
+		var key = fmt.Sprintf("%s > ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_gte:
+		var key = fmt.Sprintf("%s >= ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_lt:
+		var key = fmt.Sprintf("%s < ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_lte:
+		var key = fmt.Sprintf("%s <= ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
+		return
+	case validate.Operator_like:
+		var key = fmt.Sprintf("%s like ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = \"%%\" + %s + \"%%\" ", key, goName)
+		return
+	case validate.Operator_not_like:
+		var key = fmt.Sprintf("%s not like ?", name)
+		op = fmt.Sprintf("where[\"%s\"] = \"%%\" + %s + \"%%\" ", key, goName)
+		return
+	}
+	return
 }
 
 func Operator(name, goName string, operator validate.Operator) (op string) {
@@ -236,4 +306,34 @@ func (s *MethodDesc) Query() string {
 		panic(err)
 	}
 	return strings.Trim(buf.String(), "\r\n")
+}
+
+//go:embed action/list_page.tpl
+var listPageTemplate string
+
+func (s *MethodDesc) ListPage() string {
+	buf := new(bytes.Buffer)
+	tmpl, err := template.New("list_page").Funcs(s.MapFn()).Parse(strings.TrimSpace(listPageTemplate))
+	if err != nil {
+		panic(err)
+	}
+	if err = tmpl.Execute(buf, s); err != nil {
+		panic(err)
+	}
+	return strings.Trim(buf.String(), "\r\n")
+}
+
+//go:embed action/list.tpl
+var listTemplate string
+
+func (s *MethodDesc) List() string {
+	buf := new(bytes.Buffer)
+	tmpl, err := template.New("list").Funcs(s.MapFn()).Parse(strings.TrimSpace(listTemplate))
+	if err != nil {
+		panic(err)
+	}
+	if err = tmpl.Execute(buf, s); err != nil {
+		panic(err)
+	}
+	return buf.String()
 }

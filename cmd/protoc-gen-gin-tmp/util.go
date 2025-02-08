@@ -12,13 +12,8 @@ import (
 //go:embed wire_template.tpl
 var wireTemplate string
 
-//go:embed db_template.tpl
-var dbTemplate string
-
-func dbReplace(dir, fileName, serverName string) {
+func dbReplace(dir, fileName, content string) {
 	util.IsDir(dir)
-	var content = strings.ReplaceAll(dbTemplate, "{{NAME}}", serverName)
-	content = strings.ReplaceAll(content, "{{LOWER_NAME}}", fileName)
 	_ = util.WriteFile(fmt.Sprintf("%s/%s.go", dir, fileName), content)
 }
 

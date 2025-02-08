@@ -1,8 +1,8 @@
 package db
 
-type {{NAME}} struct {
-
+type {{.ServerType}} struct {
+	{{ StructType .Message }}
 }
-func ({{NAME}}) TableName() string {
-	return "{{LOWER_NAME}}"
+func ({{.ServerType}}) TableName() string {
+	return "{{.LowerServerType}}"
 }
