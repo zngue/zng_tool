@@ -95,6 +95,61 @@ func (Action) EnumDescriptor() ([]byte, []int) {
 	return file_google_api_http_proto_rawDescGZIP(), []int{0}
 }
 
+type Method int32
+
+const (
+	Method_METHOD_UNKNOWN Method = 0
+	Method_GET            Method = 1 //get 请求
+	Method_POST           Method = 2 //post 请求
+	Method_WEBSOCKET      Method = 3 //websocket 链接
+	Method_EVENT_STREAM   Method = 4 //事件流
+)
+
+// Enum value maps for Method.
+var (
+	Method_name = map[int32]string{
+		0: "METHOD_UNKNOWN",
+		1: "GET",
+		2: "POST",
+		3: "WEBSOCKET",
+		4: "EVENT_STREAM",
+	}
+	Method_value = map[string]int32{
+		"METHOD_UNKNOWN": 0,
+		"GET":            1,
+		"POST":           2,
+		"WEBSOCKET":      3,
+		"EVENT_STREAM":   4,
+	}
+)
+
+func (x Method) Enum() *Method {
+	p := new(Method)
+	*p = x
+	return p
+}
+
+func (x Method) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Method) Descriptor() protoreflect.EnumDescriptor {
+	return file_google_api_http_proto_enumTypes[1].Descriptor()
+}
+
+func (Method) Type() protoreflect.EnumType {
+	return &file_google_api_http_proto_enumTypes[1]
+}
+
+func (x Method) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Method.Descriptor instead.
+func (Method) EnumDescriptor() ([]byte, []int) {
+	return file_google_api_http_proto_rawDescGZIP(), []int{1}
+}
+
 // Defines the HTTP configuration for an API service. It contains a list of
 // [HttpRule][google.api.HttpRule], each specifying the mapping of an RPC method
 // to one or more HTTP REST API methods.
@@ -187,19 +242,19 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // Example:
 //
-//	service Messaging {
-//	  rpc GetMessage(GetMessageRequest) returns (Message) {
-//	    option (google.api.http) = {
-//	        get: "/v1/{name=messages/*}"
-//	    };
-//	  }
-//	}
-//	message GetMessageRequest {
-//	  string name = 1; // Mapped to URL path.
-//	}
-//	message Message {
-//	  string text = 1; // The resource content.
-//	}
+//     service Messaging {
+//       rpc GetMessage(GetMessageRequest) returns (Message) {
+//         option (google.api.http) = {
+//             get: "/v1/{name=messages/*}"
+//         };
+//       }
+//     }
+//     message GetMessageRequest {
+//       string name = 1; // Mapped to URL path.
+//     }
+//     message Message {
+//       string text = 1; // The resource content.
+//     }
 //
 // This enables an HTTP REST to gRPC mapping as below:
 //
@@ -211,21 +266,21 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // automatically become HTTP query parameters if there is no HTTP request body.
 // For example:
 //
-//	service Messaging {
-//	  rpc GetMessage(GetMessageRequest) returns (Message) {
-//	    option (google.api.http) = {
-//	        get:"/v1/messages/{message_id}"
-//	    };
-//	  }
-//	}
-//	message GetMessageRequest {
-//	  message SubMessage {
-//	    string subfield = 1;
-//	  }
-//	  string message_id = 1; // Mapped to URL path.
-//	  int64 revision = 2;    // Mapped to URL query parameter `revision`.
-//	  SubMessage sub = 3;    // Mapped to URL query parameter `sub.subfield`.
-//	}
+//     service Messaging {
+//       rpc GetMessage(GetMessageRequest) returns (Message) {
+//         option (google.api.http) = {
+//             get:"/v1/messages/{message_id}"
+//         };
+//       }
+//     }
+//     message GetMessageRequest {
+//       message SubMessage {
+//         string subfield = 1;
+//       }
+//       string message_id = 1; // Mapped to URL path.
+//       int64 revision = 2;    // Mapped to URL query parameter `revision`.
+//       SubMessage sub = 3;    // Mapped to URL query parameter `sub.subfield`.
+//     }
 //
 // This enables a HTTP JSON to RPC mapping as below:
 //
@@ -246,18 +301,18 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // specifies the mapping. Consider a REST update method on the
 // message resource collection:
 //
-//	service Messaging {
-//	  rpc UpdateMessage(UpdateMessageRequest) returns (Message) {
-//	    option (google.api.http) = {
-//	      patch: "/v1/messages/{message_id}"
-//	      body: "message"
-//	    };
-//	  }
-//	}
-//	message UpdateMessageRequest {
-//	  string message_id = 1; // mapped to the URL
-//	  Message message = 2;   // mapped to the body
-//	}
+//     service Messaging {
+//       rpc UpdateMessage(UpdateMessageRequest) returns (Message) {
+//         option (google.api.http) = {
+//           patch: "/v1/messages/{message_id}"
+//           body: "message"
+//         };
+//       }
+//     }
+//     message UpdateMessageRequest {
+//       string message_id = 1; // mapped to the URL
+//       Message message = 2;   // mapped to the body
+//     }
 //
 // The following HTTP JSON to RPC mapping is enabled, where the
 // representation of the JSON in the request body is determined by
@@ -273,18 +328,19 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // request body.  This enables the following alternative definition of
 // the update method:
 //
-//	service Messaging {
-//	  rpc UpdateMessage(Message) returns (Message) {
-//	    option (google.api.http) = {
-//	      patch: "/v1/messages/{message_id}"
-//	      body: "*"
-//	    };
-//	  }
-//	}
-//	message Message {
-//	  string message_id = 1;
-//	  string text = 2;
-//	}
+//     service Messaging {
+//       rpc UpdateMessage(Message) returns (Message) {
+//         option (google.api.http) = {
+//           patch: "/v1/messages/{message_id}"
+//           body: "*"
+//         };
+//       }
+//     }
+//     message Message {
+//       string message_id = 1;
+//       string text = 2;
+//     }
+//
 //
 // The following HTTP JSON to RPC mapping is enabled:
 //
@@ -302,20 +358,20 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 // It is possible to define multiple HTTP methods for one RPC by using
 // the `additional_bindings` option. Example:
 //
-//	service Messaging {
-//	  rpc GetMessage(GetMessageRequest) returns (Message) {
-//	    option (google.api.http) = {
-//	      get: "/v1/messages/{message_id}"
-//	      additional_bindings {
-//	        get: "/v1/users/{user_id}/messages/{message_id}"
-//	      }
-//	    };
-//	  }
-//	}
-//	message GetMessageRequest {
-//	  string message_id = 1;
-//	  string user_id = 2;
-//	}
+//     service Messaging {
+//       rpc GetMessage(GetMessageRequest) returns (Message) {
+//         option (google.api.http) = {
+//           get: "/v1/messages/{message_id}"
+//           additional_bindings {
+//             get: "/v1/users/{user_id}/messages/{message_id}"
+//           }
+//         };
+//       }
+//     }
+//     message GetMessageRequest {
+//       string message_id = 1;
+//       string user_id = 2;
+//     }
 //
 // This enables the following two alternative HTTP JSON to RPC mappings:
 //
@@ -327,15 +383,15 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // ## Rules for HTTP mapping
 //
-//  1. Leaf request fields (recursive expansion nested messages in the request
-//     message) are classified into three categories:
-//     - Fields referred by the path template. They are passed via the URL path.
-//     - Fields referred by the [HttpRule.body][google.api.HttpRule.body]. They are passed via the HTTP
-//     request body.
-//     - All other fields are passed via the URL query parameters, and the
-//     parameter name is the field path in the request message. A repeated
-//     field can be represented as multiple query parameters under the same
-//     name.
+// 1. Leaf request fields (recursive expansion nested messages in the request
+//    message) are classified into three categories:
+//    - Fields referred by the path template. They are passed via the URL path.
+//    - Fields referred by the [HttpRule.body][google.api.HttpRule.body]. They are passed via the HTTP
+//      request body.
+//    - All other fields are passed via the URL query parameters, and the
+//      parameter name is the field path in the request message. A repeated
+//      field can be represented as multiple query parameters under the same
+//      name.
 //  2. If [HttpRule.body][google.api.HttpRule.body] is "*", there is no URL query parameter, all fields
 //     are passed via URL path and HTTP request body.
 //  3. If [HttpRule.body][google.api.HttpRule.body] is omitted, there is no HTTP request body, all
@@ -343,12 +399,12 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // ### Path template syntax
 //
-//	Template = "/" Segments [ Verb ] ;
-//	Segments = Segment { "/" Segment } ;
-//	Segment  = "*" | "**" | LITERAL | Variable ;
-//	Variable = "{" FieldPath [ "=" Segments ] "}" ;
-//	FieldPath = IDENT { "." IDENT } ;
-//	Verb     = ":" LITERAL ;
+//     Template = "/" Segments [ Verb ] ;
+//     Segments = Segment { "/" Segment } ;
+//     Segment  = "*" | "**" | LITERAL | Variable ;
+//     Variable = "{" FieldPath [ "=" Segments ] "}" ;
+//     FieldPath = IDENT { "." IDENT } ;
+//     Verb     = ":" LITERAL ;
 //
 // The syntax `*` matches a single URL path segment. The syntax `**` matches
 // zero or more URL path segments, which must be the last part of the URL path
@@ -397,11 +453,11 @@ func (x *Http) GetFullyDecodeReservedExpansion() bool {
 //
 // Example:
 //
-//	http:
-//	  rules:
-//	    # Selects a gRPC method and applies HttpRule to it.
-//	    - selector: example.v1.Messaging.GetMessage
-//	      get: /v1/messages/{message_id}/{sub.subfield}
+//     http:
+//       rules:
+//         # Selects a gRPC method and applies HttpRule to it.
+//         - selector: example.v1.Messaging.GetMessage
+//           get: /v1/messages/{message_id}/{sub.subfield}
 //
 // ## Special notes
 //
@@ -469,7 +525,10 @@ type HttpRule struct {
 	// not contain an `additional_bindings` field themselves (that is,
 	// the nesting may only be one level deep).
 	AdditionalBindings []*HttpRule `protobuf:"bytes,11,rep,name=additional_bindings,json=additionalBindings,proto3" json:"additional_bindings,omitempty"`
-	Action             Action      `protobuf:"varint,13,opt,name=action,proto3,enum=google.api.Action" json:"action,omitempty"`
+	Action             Action      `protobuf:"varint,13,opt,name=action,proto3,enum=google.api.Action" json:"action,omitempty"` //请求对应的模板
+	Method             Method      `protobuf:"varint,14,opt,name=method,proto3,enum=google.api.Method" json:"method,omitempty"` //请求方法
+	Path               string      `protobuf:"bytes,15,opt,name=path,proto3" json:"path,omitempty"`                             // 请求路径
+	Group              string      `protobuf:"bytes,16,opt,name=group,proto3" json:"group,omitempty"`                           // 路由分组
 }
 
 func (x *HttpRule) Reset() {
@@ -586,6 +645,27 @@ func (x *HttpRule) GetAction() Action {
 		return x.Action
 	}
 	return Action_ACTION_UNKNOWN
+}
+
+func (x *HttpRule) GetMethod() Method {
+	if x != nil {
+		return x.Method
+	}
+	return Method_METHOD_UNKNOWN
+}
+
+func (x *HttpRule) GetPath() string {
+	if x != nil {
+		return x.Path
+	}
+	return ""
+}
+
+func (x *HttpRule) GetGroup() string {
+	if x != nil {
+		return x.Group
+	}
+	return ""
 }
 
 type isHttpRule_Pattern interface {
@@ -708,7 +788,7 @@ var file_google_api_http_proto_rawDesc = []byte{
 	0x5f, 0x64, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x5f, 0x72, 0x65, 0x73, 0x65, 0x72, 0x76, 0x65, 0x64,
 	0x5f, 0x65, 0x78, 0x70, 0x61, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08,
 	0x52, 0x1c, 0x66, 0x75, 0x6c, 0x6c, 0x79, 0x44, 0x65, 0x63, 0x6f, 0x64, 0x65, 0x52, 0x65, 0x73,
-	0x65, 0x72, 0x76, 0x65, 0x64, 0x45, 0x78, 0x70, 0x61, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x22, 0x86,
+	0x65, 0x72, 0x76, 0x65, 0x64, 0x45, 0x78, 0x70, 0x61, 0x6e, 0x73, 0x69, 0x6f, 0x6e, 0x22, 0xdc,
 	0x03, 0x0a, 0x08, 0x48, 0x74, 0x74, 0x70, 0x52, 0x75, 0x6c, 0x65, 0x12, 0x1a, 0x0a, 0x08, 0x73,
 	0x65, 0x6c, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x73,
 	0x65, 0x6c, 0x65, 0x63, 0x74, 0x6f, 0x72, 0x12, 0x12, 0x0a, 0x03, 0x67, 0x65, 0x74, 0x18, 0x02,
@@ -732,24 +812,34 @@ var file_google_api_http_proto_rawDesc = []byte{
 	0x64, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x61, 0x6c, 0x42, 0x69, 0x6e, 0x64, 0x69, 0x6e, 0x67, 0x73,
 	0x12, 0x2a, 0x0a, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x0d, 0x20, 0x01, 0x28, 0x0e,
 	0x32, 0x12, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x41, 0x63,
-	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x42, 0x09, 0x0a, 0x07,
-	0x70, 0x61, 0x74, 0x74, 0x65, 0x72, 0x6e, 0x22, 0x3b, 0x0a, 0x11, 0x43, 0x75, 0x73, 0x74, 0x6f,
-	0x6d, 0x48, 0x74, 0x74, 0x70, 0x50, 0x61, 0x74, 0x74, 0x65, 0x72, 0x6e, 0x12, 0x12, 0x0a, 0x04,
-	0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64,
-	0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04,
-	0x70, 0x61, 0x74, 0x68, 0x2a, 0x61, 0x0a, 0x06, 0x41, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12,
-	0x0a, 0x0e, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e,
-	0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x61, 0x64, 0x64, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x64,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x10, 0x02, 0x12, 0x0a, 0x0a, 0x06, 0x75, 0x70, 0x64, 0x61, 0x74,
-	0x65, 0x10, 0x03, 0x12, 0x09, 0x0a, 0x05, 0x71, 0x75, 0x65, 0x72, 0x79, 0x10, 0x04, 0x12, 0x08,
-	0x0a, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x10, 0x05, 0x12, 0x0d, 0x0a, 0x09, 0x6c, 0x69, 0x73, 0x74,
-	0x5f, 0x70, 0x61, 0x67, 0x65, 0x10, 0x06, 0x42, 0x53, 0x0a, 0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x67,
-	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x42, 0x09, 0x48, 0x74, 0x74, 0x70, 0x50,
-	0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2a, 0x74, 0x68, 0x69, 0x72, 0x64, 0x5f, 0x70, 0x61,
-	0x72, 0x74, 0x79, 0x2f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74,
-	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x3b, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0xf8, 0x01, 0x01, 0xa2, 0x02, 0x04, 0x47, 0x41, 0x50, 0x49, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x74, 0x69, 0x6f, 0x6e, 0x52, 0x06, 0x61, 0x63, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x2a, 0x0a, 0x06,
+	0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x18, 0x0e, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x12, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x61, 0x70, 0x69, 0x2e, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64,
+	0x52, 0x06, 0x6d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68,
+	0x18, 0x0f, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x12, 0x14, 0x0a, 0x05,
+	0x67, 0x72, 0x6f, 0x75, 0x70, 0x18, 0x10, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x67, 0x72, 0x6f,
+	0x75, 0x70, 0x42, 0x09, 0x0a, 0x07, 0x70, 0x61, 0x74, 0x74, 0x65, 0x72, 0x6e, 0x22, 0x3b, 0x0a,
+	0x11, 0x43, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x48, 0x74, 0x74, 0x70, 0x50, 0x61, 0x74, 0x74, 0x65,
+	0x72, 0x6e, 0x12, 0x12, 0x0a, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x04, 0x6b, 0x69, 0x6e, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x70, 0x61, 0x74, 0x68, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x70, 0x61, 0x74, 0x68, 0x2a, 0x61, 0x0a, 0x06, 0x41, 0x63,
+	0x74, 0x69, 0x6f, 0x6e, 0x12, 0x12, 0x0a, 0x0e, 0x41, 0x43, 0x54, 0x49, 0x4f, 0x4e, 0x5f, 0x55,
+	0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x61, 0x64, 0x64, 0x10,
+	0x01, 0x12, 0x0a, 0x0a, 0x06, 0x64, 0x65, 0x6c, 0x65, 0x74, 0x65, 0x10, 0x02, 0x12, 0x0a, 0x0a,
+	0x06, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x10, 0x03, 0x12, 0x09, 0x0a, 0x05, 0x71, 0x75, 0x65,
+	0x72, 0x79, 0x10, 0x04, 0x12, 0x08, 0x0a, 0x04, 0x6c, 0x69, 0x73, 0x74, 0x10, 0x05, 0x12, 0x0d,
+	0x0a, 0x09, 0x6c, 0x69, 0x73, 0x74, 0x5f, 0x70, 0x61, 0x67, 0x65, 0x10, 0x06, 0x2a, 0x50, 0x0a,
+	0x06, 0x4d, 0x65, 0x74, 0x68, 0x6f, 0x64, 0x12, 0x12, 0x0a, 0x0e, 0x4d, 0x45, 0x54, 0x48, 0x4f,
+	0x44, 0x5f, 0x55, 0x4e, 0x4b, 0x4e, 0x4f, 0x57, 0x4e, 0x10, 0x00, 0x12, 0x07, 0x0a, 0x03, 0x47,
+	0x45, 0x54, 0x10, 0x01, 0x12, 0x08, 0x0a, 0x04, 0x50, 0x4f, 0x53, 0x54, 0x10, 0x02, 0x12, 0x0d,
+	0x0a, 0x09, 0x57, 0x45, 0x42, 0x53, 0x4f, 0x43, 0x4b, 0x45, 0x54, 0x10, 0x03, 0x12, 0x10, 0x0a,
+	0x0c, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f, 0x53, 0x54, 0x52, 0x45, 0x41, 0x4d, 0x10, 0x04, 0x42,
+	0x53, 0x0a, 0x0e, 0x63, 0x6f, 0x6d, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x61, 0x70,
+	0x69, 0x42, 0x09, 0x48, 0x74, 0x74, 0x70, 0x50, 0x72, 0x6f, 0x74, 0x6f, 0x50, 0x01, 0x5a, 0x2a,
+	0x74, 0x68, 0x69, 0x72, 0x64, 0x5f, 0x70, 0x61, 0x72, 0x74, 0x79, 0x2f, 0x67, 0x6f, 0x6f, 0x67,
+	0x6c, 0x65, 0x2f, 0x61, 0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x3b, 0x61,
+	0x6e, 0x6e, 0x6f, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0xf8, 0x01, 0x01, 0xa2, 0x02, 0x04,
+	0x47, 0x41, 0x50, 0x49, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -764,24 +854,26 @@ func file_google_api_http_proto_rawDescGZIP() []byte {
 	return file_google_api_http_proto_rawDescData
 }
 
-var file_google_api_http_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_google_api_http_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_google_api_http_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_google_api_http_proto_goTypes = []interface{}{
 	(Action)(0),               // 0: google.api.Action
-	(*Http)(nil),              // 1: google.api.Http
-	(*HttpRule)(nil),          // 2: google.api.HttpRule
-	(*CustomHttpPattern)(nil), // 3: google.api.CustomHttpPattern
+	(Method)(0),               // 1: google.api.Method
+	(*Http)(nil),              // 2: google.api.Http
+	(*HttpRule)(nil),          // 3: google.api.HttpRule
+	(*CustomHttpPattern)(nil), // 4: google.api.CustomHttpPattern
 }
 var file_google_api_http_proto_depIdxs = []int32{
-	2, // 0: google.api.Http.rules:type_name -> google.api.HttpRule
-	3, // 1: google.api.HttpRule.custom:type_name -> google.api.CustomHttpPattern
-	2, // 2: google.api.HttpRule.additional_bindings:type_name -> google.api.HttpRule
+	3, // 0: google.api.Http.rules:type_name -> google.api.HttpRule
+	4, // 1: google.api.HttpRule.custom:type_name -> google.api.CustomHttpPattern
+	3, // 2: google.api.HttpRule.additional_bindings:type_name -> google.api.HttpRule
 	0, // 3: google.api.HttpRule.action:type_name -> google.api.Action
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	1, // 4: google.api.HttpRule.method:type_name -> google.api.Method
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_google_api_http_proto_init() }
@@ -840,7 +932,7 @@ func file_google_api_http_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_google_api_http_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,

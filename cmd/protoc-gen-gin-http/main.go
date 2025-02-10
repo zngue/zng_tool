@@ -3,10 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"google.golang.org/genproto/googleapis/api/annotations"
+	"github.com/zngue/zng_tool/app/util"
+	"github.com/zngue/zng_tool/third_party/google/annotations"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
-	"net/http"
+	"strings"
 )
 
 var showVersion = flag.Bool("version", false, "print the version and exit")
@@ -38,38 +39,24 @@ func main() {
 					if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 						continue
 					}
-					rule, ok := proto.GetExtension(method.Desc.Options(), annotations.E_Http).(*annotations.HttpRule)
-					if rule != nil && ok {
-						for _, bind := range rule.AdditionalBindings {
-							sd.Methods = append(sd.Methods, buildHTTPRule(&HTTPRuleData{
-								GeneratedFile: g,
-								ServerIndex:   serverIndex,
-								MethodIndex:   methodIndex,
-								Service:       service,
-								Method:        method,
-								Rule:          bind,
-							}))
-						}
-						sd.Methods = append(sd.Methods, buildHTTPRule(&HTTPRuleData{
-							GeneratedFile: g,
-							ServerIndex:   serverIndex,
-							MethodIndex:   methodIndex,
-							Service:       service,
-							Method:        method,
-							Rule:          rule,
-						}))
-
-					} else if omitemptyPrefix != "" {
-						path := fmt.Sprintf("%s/%s/%s", omitemptyPrefix, service.Desc.FullName(), method.Desc.Name())
-						sd.Methods = append(sd.Methods, buildMethodDesc(&MethodDescReq{
-							GeneratedFile: g,
-							Method:        method,
-							MethodType:    http.MethodGet,
-							Path:          path,
-							MethodIndex:   methodIndex,
-							ServerIndex:   serverIndex,
-						}))
+					comment := method.Comments.Leading.String() + method.Comments.Trailing.String()
+					if comment != "" {
+						comment = "// " + method.GoName + strings.TrimPrefix(strings.TrimSuffix(comment, "\n"), "//")
 					}
+					rule, _ := proto.GetExtension(method.Desc.Options(), annotations.E_Http).(*annotations.HttpRule)
+					path, useMethod := RequestInfo(rule, util.LowerFirst(service.GoName), util.LowerFirst(method.GoName))
+					var methodDesc = &MethodDesc{
+						Name:         method.GoName,
+						OriginalName: string(method.Desc.Name()),
+						MethodIndex:  methodIndex,
+						ServerIndex:  serverIndex,
+						Request:      g.QualifiedGoIdent(method.Input.GoIdent),
+						Reply:        g.QualifiedGoIdent(method.Output.GoIdent),
+						Comment:      comment,
+						Path:         path,
+						Method:       useMethod,
+					}
+					sd.Methods = append(sd.Methods, methodDesc)
 				}
 				serverContent := sd.execute()
 				g.P(serverContent)

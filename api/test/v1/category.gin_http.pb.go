@@ -14,6 +14,7 @@ import (
 )
 
 // 服务操作
+const OperationGinCategoryInfo = "api.test.v1.Category.Info"
 const OperationGinCategoryListPage = "api.test.v1.Category.ListPage"
 const OperationGinCategoryList = "api.test.v1.Category.List"
 const OperationGinCategoryAdd = "api.test.v1.Category.Add"
@@ -23,6 +24,7 @@ const OperationGinCategoryContent = "api.test.v1.Category.Content"
 const OperationGinCategoryStatus = "api.test.v1.Category.Status"
 
 // 服务url
+const OperationGinUrlCategoryInfo = "/v1/category/info"
 const OperationGinUrlCategoryListPage = "/v1/category/listPage"
 const OperationGinUrlCategoryList = "/v1/category/list"
 const OperationGinUrlCategoryAdd = "/v1/category/add"
@@ -33,6 +35,7 @@ const OperationGinUrlCategoryStatus = "/v1/category/status"
 
 //服务接口
 type CategoryGinHttpService interface {
+	Info(ctx context.Context, req *CategoryInfoRequest) (rs *CategoryInfoReply, err error)
 	ListPage(ctx context.Context, req *CategoryListRequest) (rs *CategoryListReply, err error)
 	List(ctx context.Context, req *CategoryListRequest) (rs *CategoryInfoListReply, err error)
 	Add(ctx context.Context, req *CategoryAddRequest) (rs *empty.Empty, err error)
@@ -49,6 +52,7 @@ type CategoryGinHttpRouterService struct {
 //服务注册
 func (s *CategoryGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
+		router.ApiGetFn(s.router, OperationGinUrlCategoryInfo, s.Info),
 		router.ApiGetFn(s.router, OperationGinUrlCategoryListPage, s.ListPage),
 		router.ApiGetFn(s.router, OperationGinUrlCategoryList, s.List),
 		router.ApiPostFn(s.router, OperationGinUrlCategoryAdd, s.Add),
@@ -57,6 +61,24 @@ func (s *CategoryGinHttpRouterService) Register() []router.IRouter {
 		router.ApiGetFn(s.router, OperationGinUrlCategoryContent, s.Content),
 		router.ApiPostFn(s.router, OperationGinUrlCategoryStatus, s.Status),
 	)
+}
+
+func (s *CategoryGinHttpRouterService) Info(ginCtx *gin.Context) (rs any, err error) {
+	var in CategoryInfoRequest
+	err = bind.Bind(ginCtx, &in)
+	if err != nil {
+		return
+	}
+	err = validate.Validate(&in)
+	if err != nil {
+		return
+	}
+	ginCtx.Set("operation", OperationGinCategoryInfo)
+	ctx := ginCtx.Request.Context()
+	ctx = context.WithValue(ctx, "operation", OperationGinCategoryInfo)
+	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	rs, err = s.srv.Info(ctx, &in)
+	return
 }
 
 func (s *CategoryGinHttpRouterService) ListPage(ginCtx *gin.Context) (rs any, err error) {
