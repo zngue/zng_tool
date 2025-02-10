@@ -49,9 +49,11 @@ func Biz(gen *protogen.Plugin) (err error) {
 				if method.Desc.IsStreamingClient() || method.Desc.IsStreamingServer() {
 					continue
 				}
-
 				rule := proto.GetExtension(method.Desc.Options(), annotations.E_Http).(*annotations.HttpRule)
-				action := rule.Action
+				var action annotations.Action
+				if rule != nil {
+					action = rule.Action
+				}
 				methodItems = append(methodItems, &MethodDesc{
 					Name:           method.GoName,
 					Action:         action,

@@ -40,7 +40,6 @@ func TmpExec(proto string) {
 		fmt.Println("go install github.com/zngue/zng_tool/cmd/protoc-gen-gin-http@latest")
 		return
 	}
-	fmt.Println("文件所在路径是：", path)
 	input := []string{
 		"--proto_path=.",
 	}
@@ -88,6 +87,5 @@ func TmpExec(proto string) {
 			return
 		}
 	}
-	fmt.Printf("proto: %s\n", proto)
 	fmt.Println("over")
 }

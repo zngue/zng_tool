@@ -29,7 +29,12 @@ CREATE TABLE `category` (
  */
 
 service Category {
-  rpc Info(CategoryInfoRequest) returns (CategoryInfoReply);
+  rpc Info(CategoryInfoRequest) returns (CategoryInfoReply){
+    option (google.api.http) = {
+      get: "/v1/category/info"
+      action:query
+    };
+  };
 
   rpc ListPage(CategoryListRequest) returns (CategoryListReply){
     option (google.api.http) = {

@@ -63,7 +63,6 @@ func RequestInfo(rule *annotations.HttpRule, serverName, methodName string) (pat
 			return
 		}
 	}
-
 	if path == "" || method == "" {
 		path = fmt.Sprintf("/%s/%s/%s", omitemptyPrefix, serverName, methodName)
 		method = http.MethodGet
@@ -77,10 +76,6 @@ func AutoMethod(rule *annotations.HttpRule) (method string) {
 		method = http.MethodGet
 	case annotations.Method_POST:
 		method = http.MethodPost
-	case annotations.Method_WEBSOCKET:
-		method = "WEBSOCKET"
-	case annotations.Method_EVENT_STREAM:
-		method = "EVENT_STREAM"
 	}
 	return
 }

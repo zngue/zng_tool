@@ -19,7 +19,6 @@ func main() {
 		fmt.Println("请安装protoc-gen-gin-tmp 插件")
 		return
 	}
-	fmt.Println("文件所在路径是：", path)
 	input := []string{
 		"--proto_path=.",
 	}
@@ -67,7 +66,6 @@ func main() {
 			return
 		}
 	}
-	fmt.Printf("proto: %s\n", proto)
 	fmt.Println("over")
 }
 func pathExists(path string) bool {

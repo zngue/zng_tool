@@ -151,7 +151,6 @@ func CreateDefaultConfig(configDir string) (err error) {
 	_, err = os.Stat(configFilePath)
 	if err == nil {
 		//fmt.Println("config.yaml 配置文件已存在", configFilePath)
-		fmt.Println(configFilePath)
 		return
 	}
 	var f *os.File

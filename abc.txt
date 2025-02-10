@@ -16,3 +16,6 @@ protoc  --proto_path=./third_party  --go_out=.   third_party/validate/validate.p
 protoc  --proto_path=./third_party  --go_out=.   third_party/google/api/http.proto
 
 protoc  --proto_path=./third_party  --go_out=.   third_party/google/api/annotations.proto
+
+
+protoc  --proto_path=./third_party  --go_out=.   third_party/google/protobuf/common.proto
