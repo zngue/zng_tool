@@ -49,14 +49,9 @@ func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ginCtx *gin.Context)  (rs a
     ctx := ginCtx.Request.Context()
     ctx=context.WithValue(ctx,"operation", OperationGin{{$svrType}}{{.OriginalName}})
     ctx=context.WithValue(ctx, "gin_ctx", ginCtx)
-    middleWires := bind.GetMiddleWires()
-    if len(middleWires)>0 {
-        for _, middleware := range middleWires {
-            err = middleware(ctx)
-            if err != nil {
-                return
-            }
-        }
+    ctx ,err= bind.GetMiddleWires(ctx)
+    if err != nil {
+        return
     }
     rs, err = s.srv.{{.Name}}(ctx, &in)
     return
