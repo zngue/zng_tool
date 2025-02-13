@@ -7,10 +7,9 @@ import (
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
-	"github.com/zngue/zng_app/pkg/bind"
-	"github.com/z
 	"github.com/zngue/zng_app/pkg/router"
+	"github.com/zngue/zng_app/pkg/validate"
+	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,7 +32,7 @@ const OperationGinUrlCategoryUpdate = "/v1/category/update"
 const OperationGinUrlCategoryDelete = "/v1/category/delete"
 const OperationGinUrlCategoryContent = "/v1/category/content"
 const OperationGinUrlCategoryStatus = "/v1/category/status"
-// 服务接口
+
 //服务接口
 type CategoryGinHttpService interface {
 	Info(ctx context.Context, req *CategoryInfoRequest) (rs *CategoryInfoReply, err error)
@@ -49,7 +48,7 @@ type CategoryGinHttpRouterService struct {
 	srv    CategoryGinHttpService
 	router *gin.RouterGroup
 }
-// 服务注册
+
 //服务注册
 func (s *CategoryGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(

@@ -1,0 +1,13 @@
+var itemVal *v1.CategoryItem
+var itemsVal []*v1.CategoryItem
+var itemVal []*v1.CategoryItem
+var itemVal *v1.CategoryItem
+var itemVal *v1.CategoryItem
+var itemsVal []*v1.CategoryItem
+var itemVal []*v1.CategoryItem
+var itemVal *v1.CategoryItem
+var itemVal *v1.CategoryItem
+	var contentVal *v1.CategoryContent
+var itemsVal []*v1.CategoryItem
+var itemVal []*v1.CategoryItem
+var itemVal *v1.CategoryItem

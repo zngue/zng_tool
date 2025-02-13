@@ -90,6 +90,7 @@ message CategoryInfoRequest{
 }
 message CategoryInfoReply{
   CategoryItem item = 1;
+  CategoryContent content = 2;
 }
 message CategoryStatusRequest{
   int32 id = 1 [(validate.rules).int32 = {gte: 0,operator:eq}];
