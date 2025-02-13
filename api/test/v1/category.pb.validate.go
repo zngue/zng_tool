@@ -400,6 +400,8 @@ func (m *CategoryDB) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	// no validation rules for Name
 
 	// no validation rules for EName
@@ -411,6 +413,22 @@ func (m *CategoryDB) validate(all bool) error {
 	// no validation rules for AutoList
 
 	// no validation rules for IsAutomatic
+
+	// no validation rules for AutoContent
+
+	// no validation rules for Remark
+
+	// no validation rules for Image
+
+	// no validation rules for Sort
+
+	// no validation rules for Status
+
+	// no validation rules for BaiduVerify
+
+	// no validation rules for CreatedAt
+
+	// no validation rules for UpdatedAt
 
 	if len(errors) > 0 {
 		return CategoryDBMultiError(errors)

@@ -24,8 +24,8 @@ type {{$svrType}}Repo struct {
 func ({{$lowerIndex}} *{{$svrType}}Repo) {{.Name}}(ctx context.Context, {{InParamsTypeModel .RequestDefault  .RequestMessage}}) ({{OutParamsTypeModel .ReplyDefault  .ReplyMessage}})  {
 	var conn = {{$lowerIndex}}.conn.WithContext(ctx)
 	var dbConn=data.NewDB[db.{{$svrType}}](conn)
-	{{if ModelContent .  $svrType }}
-	{{ModelContent .  $svrType }}
+	{{- if ModelContent .  $svrType }}
+	{{ ModelContent .  $svrType }}
 	{{else}}
 	fmt.Println(dbConn)
 	//TODO implement me
