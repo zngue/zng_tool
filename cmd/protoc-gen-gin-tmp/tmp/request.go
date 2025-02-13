@@ -85,7 +85,6 @@ func (r *Request) MapFn() template.FuncMap {
 				}
 			}
 			content := strings.Join(params, "\n\t\t")
-			WriteContent("abcde.txt", content)
 			return content
 		},
 	}

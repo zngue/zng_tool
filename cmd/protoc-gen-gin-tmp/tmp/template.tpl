@@ -21,6 +21,10 @@ func (s *{{$svrType}}Service){{.Name}}(ctx context.Context, req *{{NameTo .Reque
 	if err != nil {
        return
     }
+    {{- $content:=ServiceReplyContent .ReplyMessage -}}
+    {{- if $content }}
+        {{ $content }}
+    {{- end }}
     fmt.Println("{{$svrType}}Service->{{.Name}}",{{OutParamsPrintln .ReplyDefault .ReplyMessage}})
     return
 }

@@ -7,9 +7,10 @@ import (
 
 import (
 	"context"
-	"github.com/zngue/zng_app/pkg/router"
-	"github.com/zngue/zng_app/pkg/validate"
+	"github.com/gin-gonic/gin"
 	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/z
+	"github.com/zngue/zng_app/pkg/router"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,7 +33,7 @@ const OperationGinUrlCategoryUpdate = "/v1/category/update"
 const OperationGinUrlCategoryDelete = "/v1/category/delete"
 const OperationGinUrlCategoryContent = "/v1/category/content"
 const OperationGinUrlCategoryStatus = "/v1/category/status"
-
+// 服务接口
 //服务接口
 type CategoryGinHttpService interface {
 	Info(ctx context.Context, req *CategoryInfoRequest) (rs *CategoryInfoReply, err error)
@@ -48,7 +49,7 @@ type CategoryGinHttpRouterService struct {
 	srv    CategoryGinHttpService
 	router *gin.RouterGroup
 }
-
+// 服务注册
 //服务注册
 func (s *CategoryGinHttpRouterService) Register() []router.IRouter {
 	return router.ApiServiceFn(
@@ -77,10 +78,6 @@ func (s *CategoryGinHttpRouterService) Info(ginCtx *gin.Context) (rs any, err er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryInfo)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Info(ctx, &in)
 	return
 }
@@ -99,10 +96,6 @@ func (s *CategoryGinHttpRouterService) ListPage(ginCtx *gin.Context) (rs any, er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryListPage)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.ListPage(ctx, &in)
 	return
 }
@@ -121,10 +114,6 @@ func (s *CategoryGinHttpRouterService) List(ginCtx *gin.Context) (rs any, err er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryList)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.List(ctx, &in)
 	return
 }
@@ -143,10 +132,6 @@ func (s *CategoryGinHttpRouterService) Add(ginCtx *gin.Context) (rs any, err err
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryAdd)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Add(ctx, &in)
 	return
 }
@@ -165,10 +150,6 @@ func (s *CategoryGinHttpRouterService) Update(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryUpdate)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Update(ctx, &in)
 	return
 }
@@ -187,10 +168,6 @@ func (s *CategoryGinHttpRouterService) Delete(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryDelete)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Delete(ctx, &in)
 	return
 }
@@ -209,10 +186,6 @@ func (s *CategoryGinHttpRouterService) Content(ginCtx *gin.Context) (rs any, err
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryContent)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Content(ctx, &in)
 	return
 }
@@ -232,10 +205,6 @@ func (s *CategoryGinHttpRouterService) Status(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryStatus)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
-	ctx, err = bind.GetMiddleWires(ctx)
-	if err != nil {
-		return
-	}
 	rs, err = s.srv.Status(ctx, &in)
 	return
 }

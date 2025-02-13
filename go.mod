@@ -2,8 +2,6 @@ module github.com/zngue/zng_tool
 
 go 1.23.2
 
-replace github.com/zngue/zng_app => G:\zngue\go\zng_app
-
 require (
 	github.com/emicklei/proto v1.14.0
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
@@ -14,7 +12,6 @@ require (
 	github.com/google/wire v0.6.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	//github.com/zngue/zng_app v0.0.0-00010101000000-000000000000
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 	golang.org/x/mod v0.23.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6
@@ -22,7 +19,7 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/zngue/zng_app v0.0.0-00010101000000-000000000000
+require github.com/zngue/zng_app v1.0.6
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect

@@ -225,7 +225,12 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 					params = append(params, "reqData")
 				} else {
 					for _, element := range val.Fields {
-						params = append(params, fmt.Sprintf("req.%s", element.GoName))
+						msgType := util.MsgType(element)
+						if msgType == util.AutoRepeated || msgType == util.AutoNormal {
+							params = append(params, fmt.Sprintf("req%s", element.GoName))
+						} else {
+							params = append(params, fmt.Sprintf("req.%s", element.GoName))
+						}
 					}
 				}
 			} else {
@@ -301,6 +306,17 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 			var data = &tmp.Request{
 				Message:    req,
 				MessageMap: s.MessageMap,
+			}
+			return data.Execute()
+		},
+		"ServiceReplyContent": func(req *protogen.Message) string {
+			if len(req.Fields) == 0 {
+				return ""
+			}
+			data := &tmp.Reply{
+				Message:       req,
+				ServerType:    s.ServiceType,
+				GeneratedFile: s.GeneratedFile,
 			}
 			return data.Execute()
 		},
