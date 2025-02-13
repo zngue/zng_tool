@@ -9,12 +9,24 @@ import (
 	"strings"
 )
 
-//go:embed wire_template.tpl
+//go:embed tmp/wire_template.tpl
 var wireTemplate string
 
 func dbReplace(dir, fileName, content string) {
 	util.IsDir(dir)
 	_ = util.WriteFile(fmt.Sprintf("%s/%s.go", dir, fileName), content)
+}
+func WriteContent(fileName string, content string) {
+	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return
+	}
+	defer file.Close()
+	// 追加写入内容
+	_, err = file.WriteString(content + "\n")
+	if err != nil {
+		return
+	}
 }
 
 func ReplaceWire(dir, fileName, serverName string, pkg string) {

@@ -2,7 +2,6 @@ package model
 
 import (
 	"context"
-	"fmt"
 	"github.com/zngue/zng_app/db/data"
 	"gorm.io/gorm"
 )
@@ -25,10 +24,21 @@ type {{$svrType}}Repo struct {
 func ({{$lowerIndex}} *{{$svrType}}Repo) {{.Name}}(ctx context.Context, {{InParamsTypeModel .RequestDefault  .RequestMessage}}) ({{OutParamsTypeModel .ReplyDefault  .ReplyMessage}})  {
 	var conn = {{$lowerIndex}}.conn.WithContext(ctx)
 	var dbConn=data.NewDB[db.{{$svrType}}](conn)
+	{{if ModelContent .  $svrType }}
 	{{ModelContent .  $svrType }}
+	{{else}}
 	fmt.Println(dbConn)
 	//TODO implement me
 	panic("{{$svrType}}Repo->{{.Name}} implement me")
+	{{end}}
 	return
 }
 {{- end}}
+{{- $itemVal := IsItem "\n\t\t" }}
+{{ if $itemVal.Flag }}
+func ({{$lowerIndex}} *{{$svrType}}Repo) ChangeItem(req *db.{{$svrType}}) *biz.{{$svrType}}Item {
+	return &biz.{{$svrType}}Item{
+		{{$itemVal.StructSetContent}}
+	}
+}
+{{- end -}}

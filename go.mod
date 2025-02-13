@@ -9,18 +9,20 @@ require (
 	github.com/envoyproxy/protoc-gen-validate v1.2.1
 	github.com/fatih/color v1.18.0
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-resty/resty/v2 v2.7.0
+	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang/protobuf v1.5.4
 	github.com/google/wire v0.6.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
-	github.com/zngue/zng_app v0.0.0-00010101000000-000000000000
+	//github.com/zngue/zng_app v0.0.0-00010101000000-000000000000
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 	golang.org/x/mod v0.23.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6
 	google.golang.org/protobuf v1.36.5
 	gorm.io/gorm v1.25.12
 )
+
+require github.com/zngue/zng_app v0.0.0-00010101000000-000000000000
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect

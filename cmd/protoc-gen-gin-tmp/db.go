@@ -18,7 +18,7 @@ type DbReplace struct {
 	Pkg             string
 }
 
-//go:embed db_template.tpl
+//go:embed tmp/db_template.tpl
 var dbTemplate string
 
 // execute

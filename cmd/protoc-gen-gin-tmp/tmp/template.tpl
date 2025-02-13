@@ -15,7 +15,7 @@ func New{{$svrType}}Service({{LowerFirst $svrType}} *biz.{{$svrType}}UseCase) {{
 {{- range .Methods }}
 func (s *{{$svrType}}Service){{.Name}}(ctx context.Context, req *{{NameTo .Request}}) (rs *{{NameTo .Reply}}, err error){
 	{{- if gt .RequestLent 3 -}}
-		var reqData=&biz.{{.Request.GoName}}{}
+		{{- AutoRequest .RequestMessage }}
 	{{- end }}
 	{{OutParams .ReplyDefault .ReplyMessage false}} s.{{LowerFirst $svrType}}.{{.Name}}(ctx, {{SetReqParams .Request}})
 	if err != nil {
@@ -23,5 +23,13 @@ func (s *{{$svrType}}Service){{.Name}}(ctx context.Context, req *{{NameTo .Reque
     }
     fmt.Println("{{$svrType}}Service->{{.Name}}",{{OutParamsPrintln .ReplyDefault .ReplyMessage}})
     return
+}
+{{ end }}
+{{- $itemVal := IsItem "" }}
+{{ if $itemVal.Flag }}
+func (s *{{$svrType}}Service) ChangeItem(req *biz.{{$svrType}}Item) *{{$itemVal.MessageType}} {
+	return &{{$itemVal.MessageType}}{
+		{{ $itemVal.StructSetContent }}
+	}
 }
 {{- end -}}

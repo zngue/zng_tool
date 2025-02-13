@@ -5,4 +5,8 @@ var where = map[string]any{
     rs, err = dbConn.Content(&data.ContentRequest{
         Where: where,
     })
-    fmt.Println(rs)
+    {{- if requestName .ReplyMessage }}
+    if rs != nil {
+        {{ requestName .ReplyMessage }} = {{LowerIndex}}.ChangeItem(rs)
+    }
+    {{-  end }}

@@ -5,24 +5,24 @@ import (
 	_ "embed"
 	"fmt"
 	"github.com/zngue/zng_tool/app/util"
+	"github.com/zngue/zng_tool/cmd/protoc-gen-gin-tmp/tmp"
 	"github.com/zngue/zng_tool/third_party/google/annotations"
 	"github.com/zngue/zng_tool/third_party/validate"
 	"google.golang.org/protobuf/compiler/protogen"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/descriptorpb"
-	"os"
 	"strings"
 	"text/template"
 )
 
-//go:embed template.tpl
+//go:embed tmp/template.tpl
 var httpTemplate string
 
-//go:embed biz_template.tpl
+//go:embed tmp/biz_template.tpl
 var bizTemplate string
 
-//go:embed model_template.tpl
+//go:embed tmp/model_template.tpl
 var modelTemplate string
 
 type ServiceDesc struct {
@@ -57,6 +57,7 @@ type MethodDesc struct {
 	GoPackageName  string
 	ReplyLent      int
 	RequestLent    int
+	MessageMap     map[string]*protogen.Message //使用前请先赋值
 }
 
 func (s *ServiceDesc) ParamsTypeDel(def string, req *protogen.Message, pkg string) (params []string) {
@@ -111,19 +112,6 @@ func (s *ServiceDesc) ParamsTypeDel(def string, req *protogen.Message, pkg strin
 
 //追加写入文件
 
-func WriteContent(fileName string, content string) {
-	file, err := os.OpenFile(fileName, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		return
-	}
-	defer file.Close()
-	// 追加写入内容
-	_, err = file.WriteString(content + "\n")
-	if err != nil {
-		return
-	}
-}
-
 func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType string) {
 	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
 	if !ok || options == nil {
@@ -173,57 +161,53 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 	return
 }
 
-func DoKind() {
-
+type IsItem struct {
+	Flag             bool
+	MessageType      string
+	StructSetContent string
 }
 
-func FieldOperator(name string, req *protogen.Field) (operator validate.Operator, action validate.Action, filedType string) {
-	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
-	if !ok || options == nil {
-		//将err 写入到文件
-		return
-	}
-	rules := proto.GetExtension(options, validate.E_Rules)
-	fieldRules, ok := rules.(*validate.FieldRules)
-	if !ok || fieldRules == nil {
-		return
-	}
-	kind := req.Desc.Kind()
-	switch kind {
-	case protoreflect.Int32Kind, protoreflect.Int64Kind:
-		if intRules := fieldRules.GetInt32(); intRules != nil {
-			operator = intRules.GetOperator()
-			action = intRules.GetAction()
-			filedType = "number"
-		}
-	case protoreflect.FloatKind:
-		if floatRules := fieldRules.GetFloat(); floatRules != nil {
-			operator = floatRules.GetOperator()
-			action = floatRules.GetAction()
-			filedType = "number"
-		}
+var reqTemplate = `
 
-	case protoreflect.Uint32Kind, protoreflect.Uint64Kind:
-		if uintRules := fieldRules.GetUint32(); uintRules != nil {
-			operator = uintRules.GetOperator()
-			action = uintRules.GetAction()
-			filedType = "number"
-		}
-	case protoreflect.StringKind:
-		if stringRules := fieldRules.GetString_(); stringRules != nil {
-			operator = stringRules.GetOperator()
-			action = stringRules.GetAction()
-			filedType = "string"
-		}
-	}
-	return
-}
+
+`
 
 func (s *ServiceDesc) MapFn() template.FuncMap {
 	return template.FuncMap{
+		"ServiceReq": func(req *protogen.Message) string {
+			if len(req.Fields) > 3 {
+
+			}
+			return ""
+		},
 		"ModelContent": func(method *MethodDesc, svrType string) string {
 			method.SvrType = svrType
+			method.MessageMap = s.MessageMap
 			return method.execute()
+		},
+		"IsItem": func(str string) (val *IsItem) {
+			val = &IsItem{}
+			key := fmt.Sprintf("%sItem", s.ServiceType)
+			var (
+				messageItem *protogen.Message
+				params      []string
+			)
+			if messageItem, val.Flag = s.MessageMap[key]; val.Flag {
+				val.MessageType = s.GeneratedFile.QualifiedGoIdent(messageItem.GoIdent)
+				if len(messageItem.Fields) > 0 {
+					for _, field := range messageItem.Fields {
+						params = append(params, fmt.Sprintf("%s:req.%s,", field.GoName, field.GoName))
+					}
+				}
+				if str != "" {
+					val.StructSetContent = strings.Join(params, str)
+				} else {
+					val.StructSetContent = strings.Join(params, "\n\t")
+				}
+
+				return
+			}
+			return
 		},
 		"StructName": func(req *protogen.Message) string {
 			return string(req.Desc.FullName())
@@ -312,6 +296,13 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 				}
 			}
 			return paramsContent
+		},
+		"AutoRequest": func(req *protogen.Message) string {
+			var data = &tmp.Request{
+				Message:    req,
+				MessageMap: s.MessageMap,
+			}
+			return data.Execute()
 		},
 	}
 }

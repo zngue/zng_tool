@@ -93,7 +93,7 @@ message CategoryInfoReply{
 }
 message CategoryStatusRequest{
   int32 id = 1 [(validate.rules).int32 = {gte: 0,operator:eq}];
-  int32 status = 2 [(validate.rules).int32 = {in:[1,2]}];
+  int32 status = 2 [(validate.rules).int32 = {in:[1, 2]}];
 }
 message CategoryDB{
   string name = 1;
@@ -107,11 +107,26 @@ message CategoryListRequest {
   int32 page = 1;
   int32 pageSize = 2;
   string name = 3 [(validate.rules).string = {operator:like}];
-  string eName = 4 [(validate.rules).string={operator:like}];
+  string eName = 4 [(validate.rules).string = {operator:like}];
   int32 status = 5 [(validate.rules).int32 = {operator:neq}];
-  int32 domainId = 6[(validate.rules).int32={operator:eq}];
+  int32 domainId = 6[(validate.rules).int32 = {operator:eq}];
   int32 templateId = 7 [(validate.rules).int32 = {operator:eq}];
   repeated int32 id = 8 [(validate.rules).repeated = {operator:in}];
+  CategoryContent content = 9;
+  repeated UserInfo userInfos = 10;
+}
+message CategoryContent{
+  string name = 1;
+  string eName = 2;
+  int32 domainId = 3;
+}
+message UserInfo{
+  int32 id = 1;
+  string name = 2;
+  string eName = 3;
+  int32 domainId = 4;
+  int32 templateId = 5;
+  int32 autoList = 6;
 }
 
 message CategoryListReply {

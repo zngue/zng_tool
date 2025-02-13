@@ -33,10 +33,30 @@ func (s *MethodDesc) execute() (tmp string) {
 //go:embed action/add.tpl
 var addTemplate string
 
+const sigTemplate = `
+
+`
+
 func (s *MethodDesc) MapFn() template.FuncMap {
 	return template.FuncMap{
 		"StructName": func(req *protogen.Message) string {
 			return string(req.Desc.FullName())
+		},
+		"LowerIndex": func() string {
+			return util.LowerIndex(s.SvrType)
+		},
+		"requestName": func(req *protogen.Message) string {
+			for _, field := range req.Fields {
+				msgType := util.MsgType(field)
+				key := fmt.Sprintf("%sItem", s.SvrType)
+				if msgType == util.AutoNormal || msgType == util.AutoRepeated {
+					kind := field.Message.GoIdent.GoName
+					if kind == key {
+						return util.LowerFirst(field.GoName)
+					}
+				}
+			}
+			return ""
 		},
 		"SetFiled": func(message *protogen.Message) string {
 			var params []string

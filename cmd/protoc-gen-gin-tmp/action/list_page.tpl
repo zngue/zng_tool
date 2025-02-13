@@ -13,4 +13,10 @@ var (
 	    Order: []string{"id desc"},
 	})
 	count = int32(total)
-	fmt.Println(rs)
+	{{- if requestName .ReplyMessage }}
+    if len(rs) > 0 {
+        for _, val := range rs {
+            {{requestName .ReplyMessage}} = append({{requestName .ReplyMessage}}, {{LowerIndex}}.ChangeItem(val))
+        }
+    }
+    {{-  end }}
