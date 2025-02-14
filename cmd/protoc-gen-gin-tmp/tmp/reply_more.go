@@ -3,7 +3,6 @@ package tmp
 import (
 	"bytes"
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"github.com/zngue/zng_tool/app/util"
 	"google.golang.org/protobuf/compiler/protogen"
@@ -106,19 +105,6 @@ var replyMoreTemplate string
 
 func (r *ReplyMore) Execute() string {
 	r.Init()
-	var data = map[string]any{
-		"DataItems":      r.DataItems,
-		"GeneratedFile":  r.GeneratedFile,
-		"Message":        r.Message,
-		"MessageContent": r.MessageContent,
-		"MessageMap":     r.MessageMap,
-		"OtherItems":     r.OtherItems,
-		"RelyMessage":    r.RelyMessage,
-		"ServerType":     r.ServerType,
-		"VarContent":     r.VarContent,
-	}
-	marshal, _ := json.Marshal(data)
-	WriteContent("rr.txt", string(marshal))
 	buf := new(bytes.Buffer)
 	tmpl, err := template.New("replyMoreTemplate").Funcs(r.MapFn()).Parse(strings.TrimSpace(replyMoreTemplate))
 	if err != nil {
