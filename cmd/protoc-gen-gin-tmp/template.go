@@ -112,7 +112,7 @@ func (s *ServiceDesc) ParamsTypeDel(def string, req *protogen.Message, pkg strin
 
 //追加写入文件
 
-func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType string) {
+func DoFieldOperator(req *protogen.Field) (operator *validate.Operator, filedType string) {
 	options, ok := req.Desc.Options().(*descriptorpb.FieldOptions)
 	if !ok || options == nil {
 		return
@@ -136,18 +136,28 @@ func DoFieldOperator(req *protogen.Field) (operator validate.Operator, filedType
 	}
 
 	switch kind {
-	case protoreflect.Int32Kind, protoreflect.Int64Kind:
+	case protoreflect.Int64Kind:
+		if intRules := fieldRules.GetInt64(); intRules != nil {
+			operator = intRules.GetOperator()
+			filedType = "number"
+		}
+	case protoreflect.Int32Kind:
 		if intRules := fieldRules.GetInt32(); intRules != nil {
 			operator = intRules.GetOperator()
 			filedType = "number"
 		}
+
 	case protoreflect.FloatKind:
 		if floatRules := fieldRules.GetFloat(); floatRules != nil {
 			operator = floatRules.GetOperator()
 			filedType = "number"
 		}
-
-	case protoreflect.Uint32Kind, protoreflect.Uint64Kind:
+	case protoreflect.Uint64Kind:
+		if floatRules := fieldRules.GetUint64(); floatRules != nil {
+			operator = floatRules.GetOperator()
+			filedType = "number"
+		}
+	case protoreflect.Uint32Kind:
 		if uintRules := fieldRules.GetUint32(); uintRules != nil {
 			operator = uintRules.GetOperator()
 			filedType = "number"
@@ -313,12 +323,24 @@ func (s *ServiceDesc) MapFn() template.FuncMap {
 			if len(req.Fields) == 0 {
 				return ""
 			}
-			data := &tmp.Reply{
-				Message:       req,
-				ServerType:    s.ServiceType,
-				GeneratedFile: s.GeneratedFile,
+			if len(req.Fields) > 3 {
+				dataMore := &tmp.ReplyMore{
+					Message:       req,
+					ServerType:    s.ServiceType,
+					GeneratedFile: s.GeneratedFile,
+					MessageMap:    s.MessageMap,
+				}
+				return dataMore.Execute()
+			} else {
+				data := &tmp.Reply{
+					Message:       req,
+					ServerType:    s.ServiceType,
+					GeneratedFile: s.GeneratedFile,
+					MessageMap:    s.MessageMap,
+				}
+				return data.Execute()
 			}
-			return data.Execute()
+
 		},
 	}
 }

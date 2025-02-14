@@ -106,7 +106,6 @@ message FloatRules {
   optional string msg = 9;
 
   optional Operator operator = 10;
-  optional Action action = 11;
 
 }
 
@@ -148,7 +147,6 @@ message DoubleRules {
   //Msg custom error information
   optional string msg = 9;
   optional Operator operator = 10;
-  optional Action action = 11;
 }
 
 // Int32Rules describes the constraints applied to `int32` values
@@ -189,7 +187,6 @@ message Int32Rules {
   //Msg custom error information
   optional string msg = 9;
   optional Operator operator = 10;
-  optional Action action = 11;
 }
 
 // Int64Rules describes the constraints applied to `int64` values
@@ -230,7 +227,6 @@ message Int64Rules {
   //Msg custom error information
   optional string msg = 9;
   optional Operator operator = 10;
-  optional Action action = 11;
 }
 
 // UInt32Rules describes the constraints applied to `uint32` values
@@ -271,7 +267,6 @@ message UInt32Rules {
   //Msg custom error information
   optional string msg = 9;
   optional Operator operator = 10;
-  optional Action action = 11;
 }
 
 // UInt64Rules describes the constraints applied to `uint64` values
@@ -312,7 +307,6 @@ message UInt64Rules {
   //Msg custom error information
   optional string msg = 9;
   optional Operator operator = 10;
-  optional Action action = 11;
 }
 
 // SInt32Rules describes the constraints applied to `sint32` values
@@ -349,6 +343,7 @@ message SInt32Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // SInt64Rules describes the constraints applied to `sint64` values
@@ -385,6 +380,7 @@ message SInt64Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // Fixed32Rules describes the constraints applied to `fixed32` values
@@ -421,6 +417,7 @@ message Fixed32Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // Fixed64Rules describes the constraints applied to `fixed64` values
@@ -457,6 +454,7 @@ message Fixed64Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // SFixed32Rules describes the constraints applied to `sfixed32` values
@@ -493,6 +491,7 @@ message SFixed32Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // SFixed64Rules describes the constraints applied to `sfixed64` values
@@ -529,6 +528,7 @@ message SFixed64Rules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 8;
+  optional Operator operator = 9;
 }
 
 // BoolRules describes the constraints applied to `bool` values
@@ -537,8 +537,7 @@ message BoolRules {
   optional bool const = 1;
   //Msg custom error information
   optional string msg = 2;
-  optional string operator = 10;
-  optional string action = 11;
+  optional Operator operator = 10;
 }
 
 // StringRules describe the constraints applied to `string` values
@@ -659,10 +658,14 @@ message StringRules {
   //Msg custom error information
   optional string msg = 27;
   optional Operator operator = 28;
-  optional Action action = 29;
 }
-enum Operator{
-  OPERATOR_UNKNOWN = 0;
+message Operator{
+  optional string field = 1;
+  optional Action action = 2;
+  optional string order = 3;
+}
+enum Action{
+  Action_UNKNOWN = 0;
   eq = 1; // 等于
   neq = 2; // 不等于
   in = 3; // in
@@ -674,15 +677,7 @@ enum Operator{
   like = 9; // like
   not_like = 10; // not like
 }
-enum Action{
-  ACTION_UNKNOWN = 0;
-  add = 1; //新增
-  delete = 2; //删除
-  update = 3; //修改
-  query = 4; //查询
-  list = 5; //列表
-  list_page = 6; //列表分页
-}
+
 
 // WellKnownRegex contain some well-known patterns.
 enum KnownRegex {
@@ -755,6 +750,7 @@ message BytesRules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 14;
+  optional Operator operator = 15;
 }
 
 // EnumRules describe the constraints applied to enum values
@@ -773,6 +769,7 @@ message EnumRules {
   // NotIn specifies that this field cannot be equal to one of the specified
   // values
   repeated int32 not_in = 4;
+  optional Operator operator = 5;
 }
 
 // MessageRules describe the constraints applied to embedded message values.
@@ -813,7 +810,6 @@ message RepeatedRules {
   //Msg custom error information
   optional string msg = 6;
   optional Operator operator = 7;
-  optional string action = 8;
 }
 
 // MapRules describe the constraints applied to `map` values
@@ -841,6 +837,7 @@ message MapRules {
   // IgnoreEmpty specifies that the validation rules of this field should be
   // evaluated only if the field is not empty
   optional bool ignore_empty = 6;
+  optional Operator operator = 7;
 }
 
 // AnyRules describe constraints applied exclusively to the
@@ -856,6 +853,7 @@ message AnyRules {
   // NotIn specifies that this field's `type_url` must not be equal to any of
   // the specified values.
   repeated string not_in = 3;
+  optional Operator operator = 4;
 }
 
 // DurationRules describe the constraints applied exclusively to the
@@ -890,6 +888,7 @@ message DurationRules {
   // NotIn specifies that this field cannot be equal to one of the specified
   // values
   repeated google.protobuf.Duration not_in = 8;
+  optional Operator operator = 9;
 }
 
 // TimestampRules describe the constraints applied exclusively to the
@@ -929,4 +928,5 @@ message TimestampRules {
   // current time. This constraint can be used alone or with the LtNow and
   // GtNow rules.
   optional google.protobuf.Duration within = 9;
+  optional Operator operator = 10;
 }

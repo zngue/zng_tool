@@ -3,6 +3,7 @@ package tmp
 import (
 	"bytes"
 	_ "embed"
+	"encoding/json"
 	"fmt"
 	"github.com/zngue/zng_tool/app/util"
 	"google.golang.org/protobuf/compiler/protogen"
@@ -10,7 +11,7 @@ import (
 	"text/template"
 )
 
-type Reply struct {
+type ReplyMore struct {
 	Message       *protogen.Message
 	ServerType    string
 	GeneratedFile *protogen.GeneratedFile
@@ -22,16 +23,8 @@ type Reply struct {
 	DataItems      []*ReplyItem
 	OtherItems     []*ReplyItem
 }
-type ReplyItem struct {
-	MessageType string
-	GoName      string
-	IsRepeated  bool
-	LowerGoName string
-	GoKind      string
-	Key         string
-}
 
-func (r *Reply) Init() {
+func (r *ReplyMore) Init() {
 	var (
 		items      []*ReplyItem
 		otherItems []*ReplyItem
@@ -77,7 +70,7 @@ func (r *Reply) Init() {
 		if msgType == util.AutoNormal || msgType == util.AutoRepeated {
 			params = append(params, fmt.Sprintf("%s:%sVal,", field.GoName, util.LowerFirst(field.GoName)))
 		} else {
-			params = append(params, fmt.Sprintf("%s:%s,", field.GoName, util.LowerFirst(field.GoName)))
+			params = append(params, fmt.Sprintf("%s:reply.%s,", field.GoName, field.GoName))
 		}
 	}
 	r.MessageContent = strings.Join(params, "\n\t")
@@ -86,8 +79,11 @@ func (r *Reply) Init() {
 	r.DataItems = items
 }
 
-func (r *Reply) MapFn() template.FuncMap {
+func (r *ReplyMore) MapFn() template.FuncMap {
 	return template.FuncMap{
+		"InNameChange": func(goName string) string {
+			return fmt.Sprintf("reply.%s", goName)
+		},
 		"StructContent": func(messageType string, key string) string {
 			var params []string
 			if message, ok := r.MessageMap[messageType]; ok {
@@ -105,13 +101,26 @@ func (r *Reply) MapFn() template.FuncMap {
 	}
 }
 
-//go:embed rely_template.tpl
-var replyTemplate string
+//go:embed reply_more_template.tpl
+var replyMoreTemplate string
 
-func (r *Reply) Execute() string {
+func (r *ReplyMore) Execute() string {
 	r.Init()
+	var data = map[string]any{
+		"DataItems":      r.DataItems,
+		"GeneratedFile":  r.GeneratedFile,
+		"Message":        r.Message,
+		"MessageContent": r.MessageContent,
+		"MessageMap":     r.MessageMap,
+		"OtherItems":     r.OtherItems,
+		"RelyMessage":    r.RelyMessage,
+		"ServerType":     r.ServerType,
+		"VarContent":     r.VarContent,
+	}
+	marshal, _ := json.Marshal(data)
+	WriteContent("rr.txt", string(marshal))
 	buf := new(bytes.Buffer)
-	tmpl, err := template.New("replyTemplate").Funcs(r.MapFn()).Parse(strings.TrimSpace(replyTemplate))
+	tmpl, err := template.New("replyMoreTemplate").Funcs(r.MapFn()).Parse(strings.TrimSpace(replyMoreTemplate))
 	if err != nil {
 		panic(err)
 	}

@@ -77,6 +77,10 @@ func (s *CategoryGinHttpRouterService) Info(ginCtx *gin.Context) (rs any, err er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryInfo)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Info(ctx, &in)
 	return
 }
@@ -95,6 +99,10 @@ func (s *CategoryGinHttpRouterService) ListPage(ginCtx *gin.Context) (rs any, er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryListPage)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.ListPage(ctx, &in)
 	return
 }
@@ -113,6 +121,10 @@ func (s *CategoryGinHttpRouterService) List(ginCtx *gin.Context) (rs any, err er
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryList)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.List(ctx, &in)
 	return
 }
@@ -131,6 +143,10 @@ func (s *CategoryGinHttpRouterService) Add(ginCtx *gin.Context) (rs any, err err
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryAdd)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Add(ctx, &in)
 	return
 }
@@ -149,6 +165,10 @@ func (s *CategoryGinHttpRouterService) Update(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryUpdate)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Update(ctx, &in)
 	return
 }
@@ -167,6 +187,10 @@ func (s *CategoryGinHttpRouterService) Delete(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryDelete)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Delete(ctx, &in)
 	return
 }
@@ -185,6 +209,10 @@ func (s *CategoryGinHttpRouterService) Content(ginCtx *gin.Context) (rs any, err
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryContent)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Content(ctx, &in)
 	return
 }
@@ -204,6 +232,10 @@ func (s *CategoryGinHttpRouterService) Status(ginCtx *gin.Context) (rs any, err 
 	ctx := ginCtx.Request.Context()
 	ctx = context.WithValue(ctx, "operation", OperationGinCategoryStatus)
 	ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+	ctx, err = bind.GetMiddleWires(ctx)
+	if err != nil {
+		return
+	}
 	rs, err = s.srv.Status(ctx, &in)
 	return
 }

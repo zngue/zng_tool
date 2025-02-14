@@ -33,10 +33,6 @@ func (s *MethodDesc) execute() (tmp string) {
 //go:embed action/add.tpl
 var addTemplate string
 
-const sigTemplate = `
-
-`
-
 func (s *MethodDesc) MapFn() template.FuncMap {
 	return template.FuncMap{
 		"StructName": func(req *protogen.Message) string {
@@ -66,7 +62,7 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 					if kind == "message" || kind == "enum" {
 						continue
 					}
-					params = append(params, fmt.Sprintf("%s: req.%s,", field.GoName, field.GoName))
+					params = append(params, fmt.Sprintf("%s: %s.%s,", field.GoName, s.RequestDefault, field.GoName))
 				}
 			} else {
 				for _, field := range message.Fields {
@@ -74,7 +70,7 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 					if kind == "message" || kind == "enum" {
 						continue
 					}
-					params = append(params, fmt.Sprintf("%s: req.%s,", util.LowerFirst(field.GoName), field.GoName))
+					params = append(params, fmt.Sprintf("%s: %s.%s,", util.LowerFirst(field.GoName), s.RequestDefault, field.GoName))
 				}
 			}
 			return strings.Join(params, "\n\t\t")
@@ -85,10 +81,13 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			if len(message.Fields) > 3 {
 				for _, field := range message.Fields {
 					operator, fileType := DoFieldOperator(field)
-					if operator != validate.Operator_OPERATOR_UNKNOWN {
+					if operator == nil {
+						continue
+					}
+					if operator.GetAction() != validate.Action_Action_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						msgType := util.MsgType(field)
-						where := ListOperator(name, fmt.Sprintf("req.%s", field.GoName), operator)
+						where := ListOperator(name, fmt.Sprintf("%s.%s", s.RequestDefault, field.GoName), operator)
 						if msgType == util.SystemRepeated {
 							fileType = "repeated"
 						}
@@ -109,7 +108,10 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			} else {
 				for _, field := range message.Fields {
 					operator, fileType := DoFieldOperator(field)
-					if operator != validate.Operator_OPERATOR_UNKNOWN {
+					if operator == nil {
+						continue
+					}
+					if operator.GetAction() != validate.Action_Action_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
 						where := ListOperator(name, util.LowerFirst(field.GoName), operator)
 						if where != "" {
@@ -133,9 +135,9 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			if len(message.Fields) > 3 {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
-					if operator != validate.Operator_OPERATOR_UNKNOWN {
+					if operator.GetAction() != validate.Action_Action_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
-						content := Operator(name, fmt.Sprintf("req.%s", field.GoName), operator)
+						content := UpdateOperator(name, fmt.Sprintf("%s.%s", s.RequestDefault, field.GoName), operator)
 						if content != "" {
 							params = append(params, content)
 						}
@@ -144,9 +146,9 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			} else {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
-					if operator != validate.Operator_OPERATOR_UNKNOWN {
+					if operator.GetAction() != validate.Action_Action_UNKNOWN {
 						name := util.CamelToSnake(field.GoName)
-						content := Operator(name, util.LowerFirst(field.GoName), operator)
+						content := UpdateOperator(name, util.LowerFirst(field.GoName), operator)
 						if content != "" {
 							params = append(params, content)
 						}
@@ -160,15 +162,15 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 			if len(message.Fields) > 3 {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
-					if operator == validate.Operator_OPERATOR_UNKNOWN {
+					if operator.GetAction() == validate.Action_Action_UNKNOWN {
 						var name = util.CamelToSnake(field.GoName)
-						params = append(params, fmt.Sprintf(" \"%s\" : req.%s,", name, field.GoName))
+						params = append(params, fmt.Sprintf(" \"%s\" : %s.%s,", name, s.RequestDefault, field.GoName))
 					}
 				}
 			} else {
 				for _, field := range message.Fields {
 					operator, _ := DoFieldOperator(field)
-					if operator == validate.Operator_OPERATOR_UNKNOWN {
+					if operator.GetAction() == validate.Action_Action_UNKNOWN {
 						var name = util.CamelToSnake(field.GoName)
 						params = append(params, fmt.Sprintf(" \"%s\" : %s,", name, util.LowerFirst(field.GoName)))
 
@@ -179,45 +181,48 @@ func (s *MethodDesc) MapFn() template.FuncMap {
 		},
 	}
 }
-func ListOperator(name, goName string, operator validate.Operator) (op string) {
-	switch operator {
-	case validate.Operator_eq:
+func ListOperator(name, goName string, operator *validate.Operator) (op string) {
+	if operator.GetField() != "" {
+		name = operator.GetField()
+	}
+	switch operator.GetAction() {
+	case validate.Action_eq:
 		var key = fmt.Sprintf("%s = ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_neq:
+	case validate.Action_neq:
 		var key = fmt.Sprintf("%s != ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_in:
+	case validate.Action_in:
 		var key = fmt.Sprintf("%s in ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_not_in:
+	case validate.Action_not_in:
 		var key = fmt.Sprintf("%s not in ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_gt:
+	case validate.Action_gt:
 		var key = fmt.Sprintf("%s > ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_gte:
+	case validate.Action_gte:
 		var key = fmt.Sprintf("%s >= ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_lt:
+	case validate.Action_lt:
 		var key = fmt.Sprintf("%s < ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_lte:
+	case validate.Action_lte:
 		var key = fmt.Sprintf("%s <= ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = %s", key, goName)
 		return
-	case validate.Operator_like:
+	case validate.Action_like:
 		var key = fmt.Sprintf("%s like ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = \"%%\" + %s + \"%%\" ", key, goName)
 		return
-	case validate.Operator_not_like:
+	case validate.Action_not_like:
 		var key = fmt.Sprintf("%s not like ?", name)
 		op = fmt.Sprintf("where[\"%s\"] = \"%%\" + %s + \"%%\" ", key, goName)
 		return
@@ -225,45 +230,49 @@ func ListOperator(name, goName string, operator validate.Operator) (op string) {
 	return
 }
 
-func Operator(name, goName string, operator validate.Operator) (op string) {
-	switch operator {
-	case validate.Operator_eq:
+func UpdateOperator(name, goName string, operator *validate.Operator) (op string) {
+	field := operator.GetField()
+	if field != "" {
+		name = field
+	}
+	switch operator.GetAction() {
+	case validate.Action_eq:
 		var key = fmt.Sprintf("%s = ?", name)
 		op = fmt.Sprintf("\"%s\" : %s,", key, goName)
 		return
-	case validate.Operator_neq:
+	case validate.Action_neq:
 		var key = fmt.Sprintf("%s != ?", name)
 		op = fmt.Sprintf("\"%s\" : %s,", key, goName)
 		return
-	case validate.Operator_in:
+	case validate.Action_in:
 		var key = fmt.Sprintf("%s in ?", name)
 		op = fmt.Sprintf("\"%s\" : %s,", key, goName)
 		return
-	case validate.Operator_not_in:
+	case validate.Action_not_in:
 		var key = fmt.Sprintf("%s not in ?", name)
 		op = fmt.Sprintf("%s : %s", key, goName)
 		return
-	case validate.Operator_gt:
+	case validate.Action_gt:
 		var key = fmt.Sprintf("%s > ?", name)
 		op = fmt.Sprintf("%s : %s", key, goName)
 		return
-	case validate.Operator_gte:
+	case validate.Action_gte:
 		var key = fmt.Sprintf("%s >= ?", name)
 		op = fmt.Sprintf("%s : %s", key, goName)
 		return
-	case validate.Operator_lt:
+	case validate.Action_lt:
 		var key = fmt.Sprintf("%s < ?", name)
 		op = fmt.Sprintf("%s : %s", key, goName)
 		return
-	case validate.Operator_lte:
+	case validate.Action_lte:
 		var key = fmt.Sprintf("%s <= ?", name)
 		op = fmt.Sprintf("%s : %s", key, goName)
 		return
-	case validate.Operator_like:
+	case validate.Action_like:
 		var key = fmt.Sprintf("%s like ?", name)
 		op = fmt.Sprintf("%s :   \"%%\" + %s+ \"%%\" ", key, goName)
 		return
-	case validate.Operator_not_like:
+	case validate.Action_not_like:
 		var key = fmt.Sprintf("%s not like ?", name)
 		op = fmt.Sprintf("%s :   \"%%\" + %s+ \"%%\" ", key, goName)
 		return

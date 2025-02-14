@@ -9,7 +9,7 @@ import (
 )
 
 type OperatorContent struct {
-	Operator  validate.Operator
+	Operator  *validate.Operator
 	FiledType string
 	Where     string
 	FiledName string
