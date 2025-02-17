@@ -112,7 +112,7 @@ func run(name string, branch string) (err error) {
 		[]string{".git", ".github", "go.sum"},
 		[]string{
 			"github.com/zngue/zng_layout",
-			fmt.Sprintf("github.com/zngue_mic/%s", name),
+			fmt.Sprintf("gitee.com/zngue_mic/%s", name),
 			"zng_layout",
 			name,
 		},
