@@ -49,7 +49,7 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Gi
 		var (
 			in {{.Request}}
 			err error
-			rs  any
+			rs  *{{.Reply}}
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
