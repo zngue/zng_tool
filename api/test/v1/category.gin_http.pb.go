@@ -73,242 +73,242 @@ func NewCategoryGinHttpRouterService(router *gin.RouterGroup, srv CategoryGinHtt
 }
 
 func _Category_Info0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryInfoRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryInfo)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryInfo)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryInfo)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Info(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryListPage)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryListPage)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryListPage)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.ListPage(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_List0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryList)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryList)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryList)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.List(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_Add0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryAddRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryAdd)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryAdd)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryAdd)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Add(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_Update0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryUpdateRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryUpdate)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryUpdate)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryUpdate)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Update(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_Delete0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryDeleteRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryDelete)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryDelete)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryDelete)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Delete(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 func _Category_Content0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryContentRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryContent)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryContent)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryContent)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Content(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
 // StatusStatus
 func _Category_Status0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryStatusRequest
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGinCategoryStatus)
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGinCategoryStatus)
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGinCategoryStatus)
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.Status(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }

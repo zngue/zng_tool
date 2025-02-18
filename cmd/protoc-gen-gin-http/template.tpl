@@ -45,32 +45,32 @@ func New{{$svrType}}GinHttpRouterService(router *gin.RouterGroup,srv {{$svrType}
 {{- range .Methods }}
 {{.Comment}}
 func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}GinHttpService) gin.HandlerFunc  {
-	return func(ginCtx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in {{.Request}}
 			err error
 			rs  any
 		)
-		err = bind.Bind(ginCtx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ginCtx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
-		ctx := ginCtx.Request.Context()
+		c.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
+		ctx := c.Request.Context()
 		ctx = context.WithValue(ctx, "operation", OperationGin{{$svrType}}{{.OriginalName}})
-		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx = context.WithValue(ctx, "gin_ctx", c)
 		ctx, err = bind.GetMiddleWires(ctx)
 		if err != nil {
-			api.DataApiWithErr(ginCtx, err, rs)
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
 		rs, err = srv.{{.Name}}(ctx, &in)
-		api.DataApiWithErr(ginCtx, err, rs)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 {{- end}}
