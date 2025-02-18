@@ -22,9 +22,9 @@ func (s *ServiceDesc) execute() string {
 		},
 		"FnName": func(methodType string) string {
 			if methodType == "GET" {
-				return "ApiGetFn"
+				return "GET"
 			} else {
-				return "ApiPostFn"
+				return "POST"
 			}
 		},
 	}

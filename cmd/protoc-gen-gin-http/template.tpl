@@ -1,12 +1,16 @@
 {{$svrType := .ServiceType}}
 {{$svrName := .ServiceName}}
 import (
+	"github.com/zngue/zng_app/db/api"
 	"context"
-	"github.com/zngue/zng_app/pkg/router"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"
 )
+// 注册服务
+func Register{{$svrType}}GinServer(router *gin.RouterGroup ,srv {{$svrType}}GinHttpService) *{{$svrType}}GinHttpRouterService {
+	return New{{$svrType}}GinHttpRouterService(router, srv)
+}
 // 服务操作
 {{- range .Methods}}
 const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}}"
@@ -26,37 +30,11 @@ type {{$svrType}}GinHttpRouterService struct {
 	router *gin.RouterGroup
 }
 //服务注册 {{- .Comment }}
-func (s *{{$svrType}}GinHttpRouterService) Register() []router.IRouter {
-	return router.ApiServiceFn(
+func (s *{{$svrType}}GinHttpRouterService) Register(){
 	{{- range .Methods }}
-		router.{{FnName .Method}}(s.router, OperationGinUrl{{$svrType}}{{.OriginalName}}, s.{{.Name}}),
+	s.router.{{FnName .Method}}(OperationGinUrl{{$svrType}}{{.OriginalName}}, _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(s.srv))
 	{{- end}}
-	)
 }
-{{- range .Methods }}
-{{.Comment}}
-func (s *{{$svrType}}GinHttpRouterService) {{.Name}}(ginCtx *gin.Context)  (rs any, err error)  {
-	var in {{.Request}}
-    err = bind.Bind(ginCtx,&in)
-    if err != nil {
-        return
-    }
-    err = validate.Validate(&in)
-    if err != nil {
-        return
-    }
-    ginCtx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
-    ctx := ginCtx.Request.Context()
-    ctx=context.WithValue(ctx,"operation", OperationGin{{$svrType}}{{.OriginalName}})
-    ctx=context.WithValue(ctx, "gin_ctx", ginCtx)
-    ctx ,err= bind.GetMiddleWires(ctx)
-    if err != nil {
-        return
-    }
-    rs, err = s.srv.{{.Name}}(ctx, &in)
-    return
-}
-{{- end}}
 func New{{$svrType}}GinHttpRouterService(router *gin.RouterGroup,srv {{$svrType}}GinHttpService)  *{{$svrType}}GinHttpRouterService {
 	return  &{{$svrType}}GinHttpRouterService{
 		srv:   srv,
@@ -64,5 +42,37 @@ func New{{$svrType}}GinHttpRouterService(router *gin.RouterGroup,srv {{$svrType}
 	}
 }
 
+{{- range .Methods }}
+{{.Comment}}
+func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}GinHttpService) gin.HandlerFunc  {
+	return func(ginCtx *gin.Context) {
+		var (
+			in {{.Request}}
+			err error
+			rs  any
+		)
+		err = bind.Bind(ginCtx, &in)
+		if err != nil {
+			return
+		}
+		err = validate.Validate(&in)
+		if err != nil {
+			api.DataApiWithErr(ginCtx, err, rs)
+			return
+		}
+		ginCtx.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
+		ctx := ginCtx.Request.Context()
+		ctx = context.WithValue(ctx, "operation", OperationGin{{$svrType}}{{.OriginalName}})
+		ctx = context.WithValue(ctx, "gin_ctx", ginCtx)
+		ctx, err = bind.GetMiddleWires(ctx)
+		if err != nil {
+			api.DataApiWithErr(ginCtx, err, rs)
+			return
+		}
+		rs, err = srv.{{.Name}}(ctx, &in)
+		api.DataApiWithErr(ginCtx, err, rs)
+	}
+}
+{{- end}}
 
 

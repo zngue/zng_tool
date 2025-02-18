@@ -7,7 +7,9 @@ import (
 type {{$svrType}}Service struct {
 	{{LowerFirst $svrType}} *biz.{{$svrType}}UseCase
 }
-func New{{$svrType}}Service({{LowerFirst $svrType}} *biz.{{$svrType}}UseCase) {{.ServiceTypeName}}GinHttpService {
+func New{{$svrType}}Service(
+	{{LowerFirst $svrType}} *biz.{{$svrType}}UseCase,
+) *{{$svrType}}Service {
 	return &{{$svrType}}Service{
 		{{LowerFirst $svrType}}: {{LowerFirst $svrType}},
 	}
