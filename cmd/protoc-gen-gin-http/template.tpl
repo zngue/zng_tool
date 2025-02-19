@@ -8,8 +8,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 // 注册服务
-func Register{{$svrType}}GinServer(router *gin.RouterGroup ,srv {{$svrType}}GinHttpService) *{{$svrType}}GinHttpRouterService {
-	return New{{$svrType}}GinHttpRouterService(router, srv)
+func Register{{$svrType}}GinServer(router *gin.RouterGroup ,srv {{$svrType}}GinHttpService) {
+	 New{{$svrType}}GinHttpRouterService(router, srv).Register()
 }
 // 服务操作
 {{- range .Methods}}

@@ -77,7 +77,7 @@ func _Category_Info0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFun
 		var (
 			in  CategoryInfoRequest
 			err error
-			rs  any
+			rs  *CategoryInfoReply
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -107,7 +107,7 @@ func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.Handle
 		var (
 			in  CategoryListRequest
 			err error
-			rs  any
+			rs  *CategoryListReply
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -137,7 +137,7 @@ func _Category_List0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFun
 		var (
 			in  CategoryListRequest
 			err error
-			rs  any
+			rs  *CategoryInfoListReply
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -167,7 +167,7 @@ func _Category_Add0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc
 		var (
 			in  CategoryAddRequest
 			err error
-			rs  any
+			rs  *empty.Empty
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -197,7 +197,7 @@ func _Category_Update0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerF
 		var (
 			in  CategoryUpdateRequest
 			err error
-			rs  any
+			rs  *empty.Empty
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -227,7 +227,7 @@ func _Category_Delete0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerF
 		var (
 			in  CategoryDeleteRequest
 			err error
-			rs  any
+			rs  *empty.Empty
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -257,7 +257,7 @@ func _Category_Content0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.Handler
 		var (
 			in  CategoryContentRequest
 			err error
-			rs  any
+			rs  *CategoryContentReply
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
@@ -288,7 +288,7 @@ func _Category_Status0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerF
 		var (
 			in  CategoryStatusRequest
 			err error
-			rs  any
+			rs  *empty.Empty
 		)
 		err = bind.Bind(c, &in)
 		if err != nil {
