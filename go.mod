@@ -19,7 +19,10 @@ require (
 	gorm.io/gorm v1.25.12
 )
 
-require github.com/zngue/zng_app v1.0.6
+require (
+	github.com/zngue/zng_app v1.0.6
+	golang.org/x/sync v0.11.0
+)
 
 require (
 	github.com/bytedance/sonic v1.11.6 // indirect
