@@ -8,8 +8,11 @@ import (
 )
 
 func main() {
-
-	proto := "api/test/v1/test.proto"
+	var proto string
+	if len(os.Args) > 1 {
+		proto = os.Args[1]
+	}
+	// proto := "api/test/v1/test.proto"
 	path, err := exec.LookPath("protoc-gen-gin-tmp")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -31,6 +34,7 @@ func main() {
 	inputExt := []string{
 		"--gin-tmp_out=paths=source_relative:.",
 		"--go_out=paths=source_relative:.",
+		"--go-grpc_out=paths=source_relative:.",
 		"--gin-http_out=paths=source_relative:.",
 	}
 	input = append(input, inputExt...)
