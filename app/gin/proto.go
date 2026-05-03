@@ -2,11 +2,12 @@ package gin
 
 import (
 	"fmt"
-	"github.com/spf13/cobra"
 	"os"
 	"os/exec"
 	"regexp"
 	"strings"
+
+	"github.com/spf13/cobra"
 )
 
 var ProtoCommand = &cobra.Command{
@@ -51,6 +52,7 @@ func Exec(proto string) {
 	}
 	inputExt := []string{
 		"--go_out=paths=source_relative:.",
+		"--go-grpc_out=paths=source_relative:.",
 		"--gin-http_out=paths=source_relative:.",
 	}
 	input = append(input, inputExt...)

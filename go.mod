@@ -1,6 +1,6 @@
 module github.com/zngue/zng_tool
 
-go 1.23.2
+go 1.24.3
 
 require (
 	github.com/emicklei/proto v1.14.0
@@ -9,14 +9,13 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-resty/resty/v2 v2.7.0 // indirect
 	github.com/golang/protobuf v1.5.4
-	github.com/google/wire v0.6.0
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac
 	golang.org/x/mod v0.23.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20250207221924-e9438ea467c6
 	google.golang.org/protobuf v1.36.5
-	gorm.io/gorm v1.25.12
+	gorm.io/gorm v1.25.12 // indirect
 )
 
 require (
@@ -38,8 +37,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/jinzhu/inflection v1.0.0 // indirect
-	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
