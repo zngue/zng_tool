@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 // 注册服务
-func Register{{$svrType}}GinServer(router *gin.RouterGroup ,srv {{$svrType}}GinHttpService) {
+func Register{{$svrType}}GinServer(router *gin.Engine ,srv {{$svrType}}GinHttpService) {
 	 New{{$svrType}}GinHttpRouterService(router, srv).Register()
 }
 // 服务操作
@@ -27,7 +27,7 @@ type {{$svrType}}GinHttpService interface {
 }
 type {{$svrType}}GinHttpRouterService struct {
 	srv    {{$svrType}}GinHttpService
-	router *gin.RouterGroup
+	router *gin.Engine
 }
 //服务注册 {{- .Comment }}
 func (s *{{$svrType}}GinHttpRouterService) Register(){
@@ -35,7 +35,7 @@ func (s *{{$svrType}}GinHttpRouterService) Register(){
 	s.router.{{FnName .Method}}(OperationGinUrl{{$svrType}}{{.OriginalName}}, _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(s.srv))
 	{{- end}}
 }
-func New{{$svrType}}GinHttpRouterService(router *gin.RouterGroup,srv {{$svrType}}GinHttpService)  *{{$svrType}}GinHttpRouterService {
+func New{{$svrType}}GinHttpRouterService(router *gin.Engine,srv {{$svrType}}GinHttpService)  *{{$svrType}}GinHttpRouterService {
 	return  &{{$svrType}}GinHttpRouterService{
 		srv:   srv,
 		router: router,
@@ -60,15 +60,8 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Gi
 			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		c.Set("operation", OperationGin{{$svrType}}{{.OriginalName}})
 		ctx := c.Request.Context()
-		ctx = context.WithValue(ctx, "operation", OperationGin{{$svrType}}{{.OriginalName}})
-		ctx = context.WithValue(ctx, "gin_ctx", c)
-		ctx, err = bind.GetMiddleWires(ctx)
-		if err != nil {
-			api.DataApiWithErr(c, err, rs)
-			return
-		}
+		ctx = bind.NewServerContext(ctx, c, OperationGin{{$svrType}}{{.OriginalName}})
 		rs, err = srv.{{.Name}}(ctx, &in)
 		api.DataApiWithErr(c, err, rs)
 	}
