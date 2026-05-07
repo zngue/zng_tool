@@ -7,7 +7,10 @@ import (
 	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"
 )
-
+// 注册服务
+func Register{{$svrType}}GinServer(router *gin.Engine ,srv {{$svrType}}GinHttpService) {
+	 New{{$svrType}}GinHttpRouterService(router, srv).Register()
+}
 // 服务操作
 {{- range .Methods}}
 const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}}"
@@ -16,13 +19,29 @@ const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}
 {{- range .Methods}}
 const OperationGinUrl{{$svrType}}{{.OriginalName}}="{{.Path}}"
 {{- end}}
-
-//服务注册 {{- .Comment }}
-func Register{{$svrType}}GinRouter(router *gin.Engine, srv {{$svrType}}Server){
+//服务接口 {{- .Comment }}
+type {{$svrType}}GinHttpService interface {
 	{{- range .Methods }}
-	router.{{FnName .Method}}(OperationGinUrl{{$svrType}}{{.OriginalName}}, _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv))
+	{{.Name}}(ctx context.Context, req *{{.Request}}) (rs *{{.Reply}}, err error)
 	{{- end}}
 }
+type {{$svrType}}GinHttpRouterService struct {
+	srv    {{$svrType}}GinHttpService
+	router *gin.Engine
+}
+//服务注册 {{- .Comment }}
+func (s *{{$svrType}}GinHttpRouterService) Register(){
+	{{- range .Methods }}
+	s.router.{{FnName .Method}}(OperationGinUrl{{$svrType}}{{.OriginalName}}, _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(s.srv))
+	{{- end}}
+}
+func New{{$svrType}}GinHttpRouterService(router *gin.Engine,srv {{$svrType}}GinHttpService)  *{{$svrType}}GinHttpRouterService {
+	return  &{{$svrType}}GinHttpRouterService{
+		srv:   srv,
+		router: router,
+	}
+}
+
 {{- range .Methods }}
 {{.Comment}}
 func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}GinHttpService) gin.HandlerFunc  {
