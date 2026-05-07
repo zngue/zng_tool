@@ -2,279 +2,226 @@
 package v1
 
 import (
-	"github.com/zngue/zng_app/db/api"
-	"context"
-	"github.com/zngue/zng_app/pkg/validate"
-	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"
+	empty "github.com/golang/protobuf/ptypes/empty"
+	"github.com/zngue/zng_app/db/api"
+	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/zngue/zng_app/pkg/validate"
 )
 
-const OperationCategoryInfoHttpGin = "/v1/category/info"
-const OperationCategoryListPageHttpGin = "/v1/category/listPage"
-const OperationCategoryListHttpGin = "/v1/category/list"
-const OperationCategoryAddHttpGin = "/v1/category/add"
-const OperationCategoryUpdateHttpGin = "/v1/category/update"
-const OperationCategoryDeleteHttpGin = "/v1/category/delete"
-const OperationCategoryContentHttpGin = "/v1/category/content"
-const OperationCategoryStatusHttpGin = "/v1/category/status"
+// 服务操作
+const OperationGinCategoryInfo = "api.test.v1.Category.Info"
+const OperationGinCategoryListPage = "api.test.v1.Category.ListPage"
+const OperationGinCategoryList = "api.test.v1.Category.List"
+const OperationGinCategoryAdd = "api.test.v1.Category.Add"
+const OperationGinCategoryUpdate = "api.test.v1.Category.Update"
+const OperationGinCategoryDelete = "api.test.v1.Category.Delete"
+const OperationGinCategoryContent = "api.test.v1.Category.Content"
+const OperationGinCategoryStatus = "api.test.v1.Category.Status"
 
-// CategoryGinHandler --- defines a Gin HTTP handler.
-func RegisterCategoryGinHandler(r *gin.RouterGroup, srv CategoryServer) {
-	var routes = r.Group("/")
-	routes.GET("/v1/category/info", _Category_Info0_GIN_HTTP_Handler(srv))
-	routes.GET("/v1/category/listPage", _Category_ListPage0_GIN_HTTP_Handler(srv))
-	routes.GET("/v1/category/list", _Category_List0_GIN_HTTP_Handler(srv))
-	routes.POST("/v1/category/add", _Category_Add0_GIN_HTTP_Handler(srv))
-	routes.POST("/v1/category/update", _Category_Update0_GIN_HTTP_Handler(srv))
-	routes.POST("/v1/category/delete", _Category_Delete0_GIN_HTTP_Handler(srv))
-	routes.GET("/v1/category/content", _Category_Content0_GIN_HTTP_Handler(srv))
-	//Status
-	routes.POST("/v1/category/status", _Category_Status0_GIN_HTTP_Handler(srv))
-}
+// 服务url
+const OperationGinUrlCategoryInfo = "/v1/category/info"
+const OperationGinUrlCategoryListPage = "/v1/category/listPage"
+const OperationGinUrlCategoryList = "/v1/category/list"
+const OperationGinUrlCategoryAdd = "/v1/category/add"
+const OperationGinUrlCategoryUpdate = "/v1/category/update"
+const OperationGinUrlCategoryDelete = "/v1/category/delete"
+const OperationGinUrlCategoryContent = "/v1/category/content"
+const OperationGinUrlCategoryStatus = "/v1/category/status"
 
-func NewcategoryGinClient(srv bind.ClientServer) (server CategoryServer) {
-	return &categoryGinClient{
-		srv: srv,
-	}
-}
-
-type categoryGinClient struct {
-	srv bind.ClientServer
-	UnimplementedCategoryServer
-}
-
-func (c *categoryGinClient) Info(ctx context.Context, req *CategoryInfoRequest) (rs *CategoryInfoReply, err error) {
-	err = c.srv.GET(ctx, OperationCategoryInfoHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) ListPage(ctx context.Context, req *CategoryListRequest) (rs *CategoryListReply, err error) {
-	err = c.srv.GET(ctx, OperationCategoryListPageHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) List(ctx context.Context, req *CategoryListRequest) (rs *CategoryInfoListReply, err error) {
-	err = c.srv.GET(ctx, OperationCategoryListHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) Add(ctx context.Context, req *CategoryAddRequest) (rs *Empty, err error) {
-	err = c.srv.POST(ctx, OperationCategoryAddHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) Update(ctx context.Context, req *CategoryUpdateRequest) (rs *Empty, err error) {
-	err = c.srv.POST(ctx, OperationCategoryUpdateHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) Delete(ctx context.Context, req *CategoryDeleteRequest) (rs *Empty, err error) {
-	err = c.srv.POST(ctx, OperationCategoryDeleteHttpGin, req, &rs)
-	return
-}
-func (c *categoryGinClient) Content(ctx context.Context, req *CategoryContentRequest) (rs *CategoryContentReply, err error) {
-	err = c.srv.GET(ctx, OperationCategoryContentHttpGin, req, &rs)
-	return
-}
-
-// Status
-func (c *categoryGinClient) Status(ctx context.Context, req *CategoryStatusRequest) (rs *Empty, err error) {
-	err = c.srv.POST(ctx, OperationCategoryStatusHttpGin, req, &rs)
-	return
+// 服务注册
+func RegisterCategoryGinRouter(router *gin.Engine, srv CategoryServer) {
+	router.GET(OperationGinUrlCategoryInfo, _Category_Info0_GIN_HTTP_Handler(srv))
+	router.GET(OperationGinUrlCategoryListPage, _Category_ListPage0_GIN_HTTP_Handler(srv))
+	router.GET(OperationGinUrlCategoryList, _Category_List0_GIN_HTTP_Handler(srv))
+	router.POST(OperationGinUrlCategoryAdd, _Category_Add0_GIN_HTTP_Handler(srv))
+	router.POST(OperationGinUrlCategoryUpdate, _Category_Update0_GIN_HTTP_Handler(srv))
+	router.POST(OperationGinUrlCategoryDelete, _Category_Delete0_GIN_HTTP_Handler(srv))
+	router.GET(OperationGinUrlCategoryContent, _Category_Content0_GIN_HTTP_Handler(srv))
+	router.POST(OperationGinUrlCategoryStatus, _Category_Status0_GIN_HTTP_Handler(srv))
 }
 
 func _Category_Info0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryInfoRequest
 			err error
 			rs  *CategoryInfoReply
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryInfoHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Info(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryInfo)
+		rs, err = srv.Info(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
 			err error
 			rs  *CategoryListReply
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryListPageHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.ListPage(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryListPage)
+		rs, err = srv.ListPage(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_List0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_List0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
 			err error
 			rs  *CategoryInfoListReply
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryListHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.List(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryList)
+		rs, err = srv.List(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_Add0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_Add0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryAddRequest
 			err error
-			rs  *Empty
+			rs  *empty.Empty
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryAddHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Add(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryAdd)
+		rs, err = srv.Add(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_Update0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_Update0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryUpdateRequest
 			err error
-			rs  *Empty
+			rs  *empty.Empty
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryUpdateHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Update(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryUpdate)
+		rs, err = srv.Update(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_Delete0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_Delete0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryDeleteRequest
 			err error
-			rs  *Empty
+			rs  *empty.Empty
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryDeleteHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Delete(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryDelete)
+		rs, err = srv.Delete(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-func _Category_Content0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+func _Category_Content0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryContentRequest
 			err error
 			rs  *CategoryContentReply
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryContentHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Content(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryContent)
+		rs, err = srv.Content(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }
 
-// Status
-func _Category_Status0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
-	return func(ctx *gin.Context) {
+// StatusStatus
+func _Category_Status0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+	return func(c *gin.Context) {
 		var (
 			in  CategoryStatusRequest
 			err error
-			rs  *Empty
+			rs  *empty.Empty
 		)
-		err = bind.Bind(ctx, &in)
+		err = bind.Bind(c, &in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(427))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(ctx, err, nil, api.Code(422))
+			api.DataApiWithErr(c, err, rs)
 			return
 		}
-		ctx.Set("operation", OperationCategoryStatusHttpGin)
-		var c = context.Background()
-		c = bind.NewServerContext(c, ctx)
-		rs, err = srv.Status(c, &in)
-		api.DataApiWithErr(ctx, err, rs)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryStatus)
+		rs, err = srv.Status(ctx, &in)
+		api.DataApiWithErr(c, err, rs)
 	}
 }

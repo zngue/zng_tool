@@ -25,7 +25,7 @@ func Register{{$svrType}}GinRouter(router *gin.Engine, srv {{$svrType}}Server){
 }
 {{- range .Methods }}
 {{.Comment}}
-func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}GinHttpService) gin.HandlerFunc  {
+func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Server) gin.HandlerFunc  {
 	return func(c *gin.Context) {
 		var (
 			in {{.Request}}
