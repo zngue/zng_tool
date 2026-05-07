@@ -2,7 +2,6 @@
 {{$svrName := .ServiceName}}
 import (
 	"github.com/zngue/zng_app/db/api"
-	"context"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"

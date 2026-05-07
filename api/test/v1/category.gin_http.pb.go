@@ -2,11 +2,15 @@
 package v1
 
 import (
-	"github.com/gin-gonic/gin"
 	empty "github.com/golang/protobuf/ptypes/empty"
+)
+
+import (
 	"github.com/zngue/zng_app/db/api"
-	"github.com/zngue/zng_app/pkg/bind"
+	"context"
 	"github.com/zngue/zng_app/pkg/validate"
+	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/gin-gonic/gin"
 )
 
 // 服务操作
@@ -41,7 +45,7 @@ func RegisterCategoryGinRouter(router *gin.Engine, srv CategoryServer) {
 	router.POST(OperationGinUrlCategoryStatus, _Category_Status0_GIN_HTTP_Handler(srv))
 }
 
-func _Category_Info0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
+func _Category_Info0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryInfoRequest
