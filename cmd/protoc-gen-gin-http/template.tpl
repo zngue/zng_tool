@@ -68,12 +68,7 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 		rs, err = bind.MiddlewareHandle[*{{.Reply}}](ctx, func(ctx context.Context) (*{{.Reply}}, error) {
 			return srv.{{.Name}}(ctx, &in)
 		})
-		if err != nil {
-			err = errors_ez.Wrap(err)
-			bind.ApiErrorResponse(c, err)
-			return
-		}
-		bind.ApiCodeSuccess(c, rs)
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 {{- end}}
