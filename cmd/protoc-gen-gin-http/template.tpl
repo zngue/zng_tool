@@ -65,16 +65,14 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		h := bind.Middleware(ctx, func(ctx context.Context) (any, error) {
+		rs, err = bind.MiddlewareHandle[*{{.Reply}}](ctx, func(ctx context.Context) (*{{.Reply}}, error) {
 			return srv.{{.Name}}(ctx, &in)
 		})
-		out, err = h(ctx)
 		if err != nil {
 			err = errors_ez.Wrap(err)
 			bind.ApiErrorResponse(c, err)
 			return
 		}
-		rs = out.(*{{.Reply}})
 		bind.ApiCodeSuccess(c, rs)
 	}
 }
