@@ -55,13 +55,13 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 		ctx = bind.NewServerContext(ctx, c, OperationGin{{$svrType}}{{.OriginalName}})
 		err = bind.Bind(c, &in)
 		if err != nil {
-			err = errors_ez.Wrap(err, "绑定参数失败")
+			err = errors_ez.Wrap(err)
 			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			err = errors_ez.Wrap(err, "参数验证失败")
+			err = errors_ez.Wrap(err)
 			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
