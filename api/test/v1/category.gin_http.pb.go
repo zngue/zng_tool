@@ -7,7 +7,6 @@ import (
 
 import (
 	"github.com/zngue/zng_app/db/api"
-	"context"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
 	"github.com/gin-gonic/gin"
@@ -45,7 +44,7 @@ func RegisterCategoryGinRouter(router *gin.Engine, srv CategoryServer) {
 	router.POST(OperationGinUrlCategoryStatus, _Category_Status0_GIN_HTTP_Handler(srv))
 }
 
-func _Category_Info0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Info0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryInfoRequest
@@ -68,7 +67,7 @@ func _Category_Info0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFun
 	}
 }
 
-func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
@@ -91,7 +90,7 @@ func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.Handle
 	}
 }
 
-func _Category_List0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_List0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryListRequest
@@ -114,7 +113,7 @@ func _Category_List0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFun
 	}
 }
 
-func _Category_Add0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Add0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryAddRequest
@@ -137,7 +136,7 @@ func _Category_Add0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc
 	}
 }
 
-func _Category_Update0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Update0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryUpdateRequest
@@ -160,7 +159,7 @@ func _Category_Update0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerF
 	}
 }
 
-func _Category_Delete0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Delete0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryDeleteRequest
@@ -183,7 +182,7 @@ func _Category_Delete0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerF
 	}
 }
 
-func _Category_Content0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Content0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryContentRequest
@@ -207,7 +206,7 @@ func _Category_Content0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.Handler
 }
 
 // StatusStatus
-func _Category_Status0_GIN_HTTP_Handler(srv CategoryGinHttpService) gin.HandlerFunc {
+func _Category_Status0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var (
 			in  CategoryStatusRequest

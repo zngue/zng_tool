@@ -19,3 +19,6 @@ protoc  --proto_path=./third_party  --go_out=.   third_party/google/api/annotati
 
 
 protoc  --proto_path=./third_party  --go_out=.   third_party/google/protobuf/common.proto
+
+
+go build -o  /Users/zngue/go/bin/protoc-gen-gin-http  ./cmd/protoc-gen-gin-http

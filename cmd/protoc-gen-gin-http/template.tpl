@@ -1,9 +1,10 @@
 {{$svrType := .ServiceType}}
 {{$svrName := .ServiceName}}
 import (
-	"github.com/zngue/zng_app/db/api"
+	"context"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/zngue/zng_app/pkg/errors_ez"
 	"github.com/gin-gonic/gin"
 )
 
@@ -15,6 +16,25 @@ const OperationGin{{$svrType}}{{.OriginalName}} = "{{$svrName}}.{{.OriginalName}
 {{- range .Methods}}
 const OperationGinUrl{{$svrType}}{{.OriginalName}}="{{.Path}}"
 {{- end}}
+
+type {{$svrType}}GinClient struct {
+	Unimplemented{{$svrType}}Server
+	srv bind.ClientServer
+}
+
+func New{{$svrType}}GinClient(srv bind.ClientServer) {{$svrType}}Server {
+	return &{{$svrType}}GinClient{
+		srv: srv,
+	}
+}
+{{- range .Methods}}
+{{.Comment}}
+func (c *{{$svrType}}GinClient){{.Name}}(ctx context.Context, req *{{.Request}}) (rs *{{.Reply}}, err error) {
+	err = c.srv.{{FnName .Method}}(ctx, OperationGinUrl{{$svrType}}{{.OriginalName}}, req, &rs)
+	return
+}
+{{- end}}
+
 
 //服务注册 {{- .Comment }}
 func Register{{$svrType}}GinRouter(router *gin.Engine, srv {{$svrType}}Server){
@@ -31,21 +51,32 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 			err error
 			rs  *{{.Reply}}
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(ctx, c, OperationGin{{$svrType}}{{.OriginalName}})
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err, "绑定参数失败")
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err, "参数验证失败")
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGin{{$svrType}}{{.OriginalName}})
-		rs, err = srv.{{.Name}}(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		h := bind.Middleware(ctx, func(ctx context.Context) (any, error) {
+			return srv.{{.Name}}(ctx, &in)
+		})
+		out, err = h(ctx)
+		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorResponse(c, err)
+			return
+		}
+		rs = out.(*{{.Reply}})
+		bind.ApiCodeSuccess(c, rs)
 	}
 }
 {{- end}}
-
 
