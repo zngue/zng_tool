@@ -6,9 +6,10 @@ import (
 )
 
 import (
-	"github.com/zngue/zng_app/db/api"
+	"context"
 	"github.com/zngue/zng_app/pkg/validate"
 	"github.com/zngue/zng_app/pkg/bind"
+	"github.com/zngue/zng_app/pkg/errors_ez"
 	"github.com/gin-gonic/gin"
 )
 
@@ -32,6 +33,58 @@ const OperationGinUrlCategoryDelete = "/v1/category/delete"
 const OperationGinUrlCategoryContent = "/v1/category/content"
 const OperationGinUrlCategoryStatus = "/v1/category/status"
 
+type CategoryGinClient struct {
+	UnimplementedCategoryServer
+	srv bind.ClientServer
+}
+
+func NewCategoryGinClient(srv bind.ClientServer) CategoryServer {
+	return &CategoryGinClient{
+		srv: srv,
+	}
+}
+
+func (c *CategoryGinClient) Info(ctx context.Context, req *CategoryInfoRequest) (rs *CategoryInfoReply, err error) {
+	err = c.srv.GET(ctx, OperationGinUrlCategoryInfo, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) ListPage(ctx context.Context, req *CategoryListRequest) (rs *CategoryListReply, err error) {
+	err = c.srv.GET(ctx, OperationGinUrlCategoryListPage, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) List(ctx context.Context, req *CategoryListRequest) (rs *CategoryInfoListReply, err error) {
+	err = c.srv.GET(ctx, OperationGinUrlCategoryList, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) Add(ctx context.Context, req *CategoryAddRequest) (rs *empty.Empty, err error) {
+	err = c.srv.POST(ctx, OperationGinUrlCategoryAdd, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) Update(ctx context.Context, req *CategoryUpdateRequest) (rs *empty.Empty, err error) {
+	err = c.srv.POST(ctx, OperationGinUrlCategoryUpdate, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) Delete(ctx context.Context, req *CategoryDeleteRequest) (rs *empty.Empty, err error) {
+	err = c.srv.POST(ctx, OperationGinUrlCategoryDelete, req, &rs)
+	return
+}
+
+func (c *CategoryGinClient) Content(ctx context.Context, req *CategoryContentRequest) (rs *CategoryContentReply, err error) {
+	err = c.srv.GET(ctx, OperationGinUrlCategoryContent, req, &rs)
+	return
+}
+
+// StatusStatus
+func (c *CategoryGinClient) Status(ctx context.Context, req *CategoryStatusRequest) (rs *empty.Empty, err error) {
+	err = c.srv.POST(ctx, OperationGinUrlCategoryStatus, req, &rs)
+	return
+}
+
 // 服务注册
 func RegisterCategoryGinRouter(router *gin.Engine, srv CategoryServer) {
 	router.GET(OperationGinUrlCategoryInfo, _Category_Info0_GIN_HTTP_Handler(srv))
@@ -51,19 +104,30 @@ func _Category_Info0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *CategoryInfoReply
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryInfo,
+			OperationGinUrlCategoryInfo,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryInfo)
-		rs, err = srv.Info(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*CategoryInfoReply, error) {
+			return srv.Info(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -74,19 +138,30 @@ func _Category_ListPage0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *CategoryListReply
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryListPage,
+			OperationGinUrlCategoryListPage,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryListPage)
-		rs, err = srv.ListPage(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*CategoryListReply, error) {
+			return srv.ListPage(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -97,19 +172,30 @@ func _Category_List0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *CategoryInfoListReply
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryList,
+			OperationGinUrlCategoryList,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryList)
-		rs, err = srv.List(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*CategoryInfoListReply, error) {
+			return srv.List(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -120,19 +206,30 @@ func _Category_Add0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *empty.Empty
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryAdd,
+			OperationGinUrlCategoryAdd,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryAdd)
-		rs, err = srv.Add(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*empty.Empty, error) {
+			return srv.Add(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -143,19 +240,30 @@ func _Category_Update0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *empty.Empty
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryUpdate,
+			OperationGinUrlCategoryUpdate,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryUpdate)
-		rs, err = srv.Update(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*empty.Empty, error) {
+			return srv.Update(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -166,19 +274,30 @@ func _Category_Delete0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *empty.Empty
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryDelete,
+			OperationGinUrlCategoryDelete,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryDelete)
-		rs, err = srv.Delete(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*empty.Empty, error) {
+			return srv.Delete(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -189,19 +308,30 @@ func _Category_Content0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *CategoryContentReply
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryContent,
+			OperationGinUrlCategoryContent,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryContent)
-		rs, err = srv.Content(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*CategoryContentReply, error) {
+			return srv.Content(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }
 
@@ -213,18 +343,29 @@ func _Category_Status0_GIN_HTTP_Handler(srv CategoryServer) gin.HandlerFunc {
 			err error
 			rs  *empty.Empty
 		)
+		ctx := c.Request.Context()
+		ctx = bind.NewServerContext(
+			ctx,
+			c,
+			OperationGinCategoryStatus,
+			OperationGinUrlCategoryStatus,
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataMsg("绑定参数失败"))
 			return
 		}
 		err = validate.Validate(&in)
 		if err != nil {
-			api.DataApiWithErr(c, err, rs)
+			err = errors_ez.Wrap(err)
+			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGinCategoryStatus)
-		rs, err = srv.Status(ctx, &in)
-		api.DataApiWithErr(c, err, rs)
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*empty.Empty, error) {
+			return srv.Status(ctx, &in)
+		})
+		bind.ApiDataWithErr(c, err, rs)
 	}
 }

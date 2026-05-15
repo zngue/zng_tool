@@ -52,7 +52,13 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 			rs  *{{.Reply}}
 		)
 		ctx := c.Request.Context()
-		ctx = bind.NewServerContext(ctx, c, OperationGin{{$svrType}}{{.OriginalName}})
+		ctx = bind.NewServerContext(
+			ctx,
+			c, 
+			OperationGin{{$svrType}}{{.OriginalName}}, 
+			OperationGinUrl{{$svrType}}{{.OriginalName}},
+		)
+		defer bind.MiddlewareAfter(ctx, err, &in, rs)
 		err = bind.Bind(c, &in)
 		if err != nil {
 			err = errors_ez.Wrap(err)
@@ -65,7 +71,7 @@ func _{{$svrType}}_{{.Name}}{{.ServerIndex}}_GIN_HTTP_Handler(srv {{$svrType}}Se
 			bind.ApiErrorParameter(c, err, bind.DataCode(bind.ErrorParameter), bind.DataMsg("参数验证失败"))
 			return
 		}
-		rs, err = bind.MiddlewareHandle[*{{.Reply}}](ctx, func(ctx context.Context) (*{{.Reply}}, error) {
+		rs, err = bind.MiddlewareHandle(ctx, func(ctx context.Context) (*{{.Reply}}, error) {
 			return srv.{{.Name}}(ctx, &in)
 		})
 		bind.ApiDataWithErr(c, err, rs)
