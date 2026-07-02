@@ -3,6 +3,12 @@ package api.test.v1;
 option go_package = "github.com/zngue/zng_tool/api/test/v1;v1";
 import "google/api/annotations.proto";
 import "validate/validate.proto";
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.MethodOptions {
+    string table = 50001;
+}
+
 service User {
     rpc Info(AbcUserRequest) returns (AbcUserReply) {
         option (google.api.http) = {
