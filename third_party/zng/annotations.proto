@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package zng;
+
+option go_package = "github.com/zngue/zng_tool/third_party/zng;zng";
+
+import "google/protobuf/descriptor.proto";
+
+extend google.protobuf.ServiceOptions {
+  bool public = 50003;
+}

@@ -2,7 +2,7 @@ module github.com/zngue/zng_tool
 
 go 1.25.0
 
-// replace github.com/zngue/zng_app => /Users/zngue/www/go/zng_go/zng_app
+replace github.com/zngue/zng_app => /Users/zngue/www/go/zng_go/zng_app
 
 require (
 	github.com/emicklei/proto v1.14.0
